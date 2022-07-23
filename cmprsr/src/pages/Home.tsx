@@ -1,35 +1,46 @@
 /* eslint-disable react/jsx-handler-names */
-import HuffmanTree from 'components/HuffmanTree'
+import Huffman from 'components/Huffman'
+import LempelZiv from 'components/LempelZiv'
 import type { ReactElement } from 'react'
 import { useRef, useState } from 'react'
+
+const encodings = [Huffman, LempelZiv]
 
 export default function Home(): ReactElement {
 	const [toggle, setToggle] = useState(false)
 	const plainTextReference = useRef<HTMLTextAreaElement>(null)
 	return (
 		<div>
-			<form className='flex flex-col'>
+			<form className='prose mx-auto grid w-1/2 gap-1 lg:prose-xl'>
 				<h1>CMPRSR</h1>
-				<h2>Huffman</h2>
 				<span>Enter your text</span>
-				<textarea id='plaintext' ref={plainTextReference} />
+				<textarea
+					id='plaintext'
+					className='textarea'
+					ref={plainTextReference}
+				/>
 				<button
+					className='btn'
 					type='submit'
 					onClick={(event: React.MouseEvent<HTMLButtonElement>): void => {
 						setToggle(t => !t)
-						console.log(plainTextReference.current?.value)
 						event.preventDefault()
 					}}
 				>
 					Compress
 				</button>
-				{plainTextReference.current?.value ? (
-					<HuffmanTree
-						key={Number(toggle)}
-						plainText={plainTextReference.current.value}
-					/>
-				) : undefined}
 			</form>
+			<div className='flex'>
+				{plainTextReference.current?.value
+					? encodings.map((Encoding, index) => (
+							<Encoding
+								// eslint-disable-next-line react/no-array-index-key
+								key={index + Number(toggle)}
+								plainText={plainTextReference.current?.value ?? ''}
+							/>
+					  ))
+					: undefined}
+			</div>
 		</div>
 	)
 }

@@ -2,26 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-	@font-face {
-		font-family: Inter;
-		font-style: normal;
-		font-weight: 400;
-		font-display: swap;
-		src: url('/fonts/Inter-Regular.woff2') format('woff2');
-	}
-	@font-face {
-		font-family: Inter;
-		font-style: normal;
-		font-weight: 500;
-		font-display: swap;
-		src: url('/fonts/Inter-Medium.woff2') format('woff2');
-	}
-	@font-face {
-		font-family: Inter;
-		font-style: normal;
-		font-weight: 700;
-		font-display: swap;
-		src: url('/fonts/Inter-Bold.woff2') format('woff2');
-	}
+body {
+	font-family: Poppins, -apple-system, BlinkMacSystemFont, 'Roboto', 'Segoe UI',
+		'Helvetica Neue', 'Lucida Grande', Arial, sans-serif;
 }
