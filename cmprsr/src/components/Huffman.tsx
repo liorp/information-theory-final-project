@@ -10,12 +10,18 @@ import type {
 import type { HuffmanTree } from 'utils/huffman'
 import { getHuffmanDictionarySize } from 'utils/huffman'
 
-export function parseHuffmanTreeTod3(tree: HuffmanTree): RawNodeDatum {
+export function parseHuffmanTreeTod3(
+	tree: HuffmanTree,
+	prefix = ''
+): RawNodeDatum {
 	return {
 		name: tree.symbols ?? '',
+		attributes: { ...(tree.symbols && { code: prefix }) },
 		children: [tree.left, tree.right]
 			.filter(child => child !== undefined)
-			.map(child => parseHuffmanTreeTod3(child as HuffmanTree))
+			.map((child, index) =>
+				parseHuffmanTreeTod3(child as HuffmanTree, `${prefix}${index}`)
+			)
 	}
 }
 
@@ -32,15 +38,13 @@ const getDynamicPathClass = ({ source, target }: TreeLinkDatum): string => {
 
 function HuffmanTreeVisualizer({ tree }: { tree: HuffmanTree }): ReactElement {
 	return (
-		<div>
-			<div className='h-90 w-90'>
-				<Tree
-					data={parseHuffmanTreeTod3(tree)}
-					orientation='vertical'
-					pathFunc='straight'
-					pathClassFunc={getDynamicPathClass}
-				/>
-			</div>
+		<div className='h-full w-full'>
+			<Tree
+				data={parseHuffmanTreeTod3(tree)}
+				orientation='vertical'
+				pathFunc='straight'
+				pathClassFunc={getDynamicPathClass}
+			/>
 		</div>
 	)
 }
@@ -66,9 +70,7 @@ export default function Huffman({
 					Frequencies:{' '}
 					{JSON.stringify(Object.fromEntries(frequencies.entries()))}
 				</span>
-				<span>
-					Tree: <HuffmanTreeVisualizer tree={tree} />
-				</span>
+
 				<span>
 					Dictionary: {JSON.stringify(dictionary)} Size:{dictionarySize}
 				</span>
@@ -79,6 +81,8 @@ export default function Huffman({
 					Compression Ratio:{' '}
 					{(encodedText.length + dictionarySize) / (decodedText.length * 8)}{' '}
 				</span>
+				<span>Tree:</span>
+				<HuffmanTreeVisualizer tree={tree} />
 			</div>
 		</div>
 	)

@@ -13,7 +13,9 @@ export default function Home(): ReactElement {
 	return (
 		<div className='flex h-full flex-col'>
 			<form className='prose mx-auto mt-2 grid w-1/2 gap-1 lg:prose-xl'>
-				<h1 className='w-min transform transition hover:-rotate-6'>CMPRSR</h1>
+				<h1 className='text-gradient w-min transform bg-green-300 font-vt323 transition hover:-rotate-6'>
+					CMPRSR
+				</h1>
 				<textarea
 					id='plaintext'
 					className='textarea'

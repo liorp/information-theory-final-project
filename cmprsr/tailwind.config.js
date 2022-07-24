@@ -7,6 +7,14 @@ const typographyPlugin = require('@tailwindcss/typography')
 const config = {
 	darkMode: 'class',
 	content: ['index.html', 'src/**/*.tsx'],
+	theme: {
+		extend: {
+			fontFamily: {
+				poppins: ['Poppins', 'sans-serif'],
+				vt323: ['VT323', 'monospace']
+			}
+		}
+	},
 	experimental: { optimizeUniversalDefaults: true },
 	plugins: [formsPlugin, daisyui, typographyPlugin]
 }
