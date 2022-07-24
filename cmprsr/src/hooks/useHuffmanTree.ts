@@ -7,7 +7,7 @@ import {
 	getLetterFrequencies
 } from 'utils/huffman'
 
-export default function useHuffmanTree(
+export default function useHuffman(
 	plainText: string
 ): [Frequencies, HuffmanTree, Dictionary, string, string] {
 	const frequencies = getLetterFrequencies(plainText)

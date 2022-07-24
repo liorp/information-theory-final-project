@@ -5,12 +5,8 @@ const typographyPlugin = require('@tailwindcss/typography')
 
 /** @type {import('tailwindcss/types').Config} */
 const config = {
+	darkMode: 'class',
 	content: ['index.html', 'src/**/*.tsx'],
-	theme: {
-		fontFamily: {
-			sans: ['Inter', ...defaultConfig.theme.fontFamily.sans]
-		}
-	},
 	experimental: { optimizeUniversalDefaults: true },
 	plugins: [formsPlugin, daisyui, typographyPlugin]
 }

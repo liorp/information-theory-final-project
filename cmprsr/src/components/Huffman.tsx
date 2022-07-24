@@ -2,7 +2,48 @@
 /* eslint-disable react/require-default-props */
 import useHuffman from 'hooks/useHuffmanTree'
 import type { ReactElement } from 'react'
+import Tree from 'react-d3-tree'
+import type {
+	RawNodeDatum,
+	TreeLinkDatum
+} from 'react-d3-tree/lib/types/common'
+import type { HuffmanTree } from 'utils/huffman'
 import { getHuffmanDictionarySize } from 'utils/huffman'
+
+export function parseHuffmanTreeTod3(tree: HuffmanTree): RawNodeDatum {
+	return {
+		name: tree.symbols ?? '',
+		children: [tree.left, tree.right]
+			.filter(child => child !== undefined)
+			.map(child => parseHuffmanTreeTod3(child as HuffmanTree))
+	}
+}
+
+const getDynamicPathClass = ({ source, target }: TreeLinkDatum): string => {
+	if (source.children?.[0] === target) {
+		return 'link__to-left'
+	}
+	if (source.children?.[1] === target) {
+		return 'link__to-right'
+	}
+	// Style it as a link connecting two branch nodes by default.
+	return 'link__to-branch'
+}
+
+function HuffmanTreeVisualizer({ tree }: { tree: HuffmanTree }): ReactElement {
+	return (
+		<div>
+			<div className='h-90 w-90'>
+				<Tree
+					data={parseHuffmanTreeTod3(tree)}
+					orientation='vertical'
+					pathFunc='straight'
+					pathClassFunc={getDynamicPathClass}
+				/>
+			</div>
+		</div>
+	)
+}
 
 export default function Huffman({
 	plainText
@@ -13,7 +54,7 @@ export default function Huffman({
 		useHuffman(plainText)
 	const dictionarySize = getHuffmanDictionarySize(dictionary)
 	return (
-		<div className='card flex flex-col shadow-xl'>
+		<div className='card flex max-w-md flex-col break-all shadow-xl'>
 			<div className='card-body gap-5'>
 				<div className='card-title'>
 					<h2>Huffman</h2>
@@ -25,7 +66,9 @@ export default function Huffman({
 					Frequencies:{' '}
 					{JSON.stringify(Object.fromEntries(frequencies.entries()))}
 				</span>
-				<span>Tree: {JSON.stringify(tree)}</span>
+				<span>
+					Tree: <HuffmanTreeVisualizer tree={tree} />
+				</span>
 				<span>
 					Dictionary: {JSON.stringify(dictionary)} Size:{dictionarySize}
 				</span>

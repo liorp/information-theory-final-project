@@ -1,4 +1,5 @@
 /* eslint-disable react/jsx-handler-names */
+import Footer from 'components/Footer'
 import Huffman from 'components/Huffman'
 import LempelZiv from 'components/LempelZiv'
 import type { ReactElement } from 'react'
@@ -10,13 +11,13 @@ export default function Home(): ReactElement {
 	const [toggle, setToggle] = useState(false)
 	const plainTextReference = useRef<HTMLTextAreaElement>(null)
 	return (
-		<div>
-			<form className='prose mx-auto grid w-1/2 gap-1 lg:prose-xl'>
-				<h1>CMPRSR</h1>
-				<span>Enter your text</span>
+		<div className='flex h-full flex-col'>
+			<form className='prose mx-auto mt-2 grid w-1/2 gap-1 lg:prose-xl'>
+				<h1 className='w-min transform transition hover:-rotate-6'>CMPRSR</h1>
 				<textarea
 					id='plaintext'
 					className='textarea'
+					placeholder='Enter your text here'
 					ref={plainTextReference}
 				/>
 				<button
@@ -30,17 +31,20 @@ export default function Home(): ReactElement {
 					Compress
 				</button>
 			</form>
-			<div className='flex'>
+			<div className='carousel rounded-box mx-auto w-3/4 grow'>
 				{plainTextReference.current?.value
 					? encodings.map((Encoding, index) => (
-							<Encoding
+							<div
 								// eslint-disable-next-line react/no-array-index-key
 								key={index + Number(toggle)}
-								plainText={plainTextReference.current?.value ?? ''}
-							/>
+								className='carousel-item m-2'
+							>
+								<Encoding plainText={plainTextReference.current?.value ?? ''} />
+							</div>
 					  ))
 					: undefined}
 			</div>
+			<Footer />
 		</div>
 	)
 }
