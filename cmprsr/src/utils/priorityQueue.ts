@@ -4,7 +4,7 @@
 export class BinaryHeapStrategy<T> implements QueueStrategy<T> {
 	private readonly comparator: Comparator<T>
 
-	private data: T[]
+	public data: T[]
 
 	constructor(options: Options<T>) {
 		this.comparator = options.comparator
@@ -96,6 +96,7 @@ export interface Options<T> {
 }
 
 export interface QueueStrategy<T> {
+	data: T[]
 	queue: (value: T) => void
 	dequeue: () => T
 	peek: () => T
@@ -109,7 +110,7 @@ export class PriorityQueue<T> {
 		return this._length
 	}
 
-	private readonly strategy: QueueStrategy<T>
+	public readonly strategy: QueueStrategy<T>
 
 	public constructor(options: Options<T>) {
 		this._length = options.initialValues ? options.initialValues.length : 0

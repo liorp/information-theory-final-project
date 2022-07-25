@@ -1,13 +1,13 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
-/* eslint-disable react/require-default-props */
+/* eslint-disable react/jsx-handler-names, react/no-array-index-key, @typescript-eslint/no-magic-numbers, react/require-default-props */
 import useHuffman from 'hooks/useHuffmanTree'
 import type { ReactElement } from 'react'
+import { useState } from 'react'
 import Tree from 'react-d3-tree'
 import type {
 	RawNodeDatum,
 	TreeLinkDatum
 } from 'react-d3-tree/lib/types/common'
-import type { HuffmanTreeNode } from 'utils/huffman'
+import type { HuffmanTreeNode, HuffmanTreeStages } from 'utils/huffman'
 import { getHuffmanDictionarySize } from 'utils/huffman'
 
 export function parseHuffmanTreeTod3(
@@ -54,16 +54,46 @@ function HuffmanTreeVisualizer({
 	)
 }
 
+function HuffmanTreeStagesVisualizer({
+	stages
+}: {
+	stages: HuffmanTreeStages
+}): ReactElement {
+	const [selectedStage, setSelectedStage] = useState(0)
+
+	return (
+		<>
+			<div className='btn-group'>
+				{stages.map((stage, index) => (
+					<button
+						key={index}
+						type='button'
+						className={`btn ${index === selectedStage ? 'btn-active' : ''}`}
+						onClick={(): void => setSelectedStage(index)}
+					>
+						{index}
+					</button>
+				))}
+			</div>
+			<div className='flex'>
+				{stages[selectedStage].map((tree, index) => (
+					<HuffmanTreeVisualizer key={index} tree={tree} />
+				))}
+			</div>
+		</>
+	)
+}
+
 export default function Huffman({
 	plainText
 }: {
 	plainText: string
 }): ReactElement {
-	const [frequencies, tree, dictionary, encodedText, decodedText] =
+	const { stages, frequencies, tree, dictionary, encodedText, decodedText } =
 		useHuffman(plainText)
 	const dictionarySize = getHuffmanDictionarySize(dictionary)
 	return (
-		<div className='card flex max-w-md flex-col break-all shadow-xl'>
+		<div className='card flex max-w-lg flex-col break-all shadow-xl'>
 			<div className='card-body gap-5'>
 				<div className='card-title'>
 					<h2>Huffman</h2>
@@ -88,6 +118,8 @@ export default function Huffman({
 				</span>
 				<span>Tree:</span>
 				<HuffmanTreeVisualizer tree={tree} />
+				<span>Stages:</span>
+				<HuffmanTreeStagesVisualizer stages={stages} />
 			</div>
 		</div>
 	)

@@ -14,6 +14,7 @@ export interface HuffmanTreeNode {
 }
 
 export type Frequencies = Map<string, number>
+export type HuffmanTreeStages = HuffmanTreeNode[][]
 
 export interface Dictionary {
 	string?: string
@@ -25,6 +26,31 @@ export function getLetterFrequencies(text: string): Frequencies {
 		frequencies.set(letter, (frequencies.get(letter) ?? 0) + 1)
 	}
 	return frequencies
+}
+
+export function createHuffmanTreeStages(
+	frequencies: Frequencies
+): HuffmanTreeStages {
+	const stages: HuffmanTreeStages = []
+	const queue = new PriorityQueue<HuffmanTreeNode>({
+		comparator: (a, b) => a.frequency - b.frequency
+	})
+	for (const [symbols, frequency] of frequencies) {
+		queue.queue({ symbols, frequency })
+	}
+	stages.push(structuredClone(queue.strategy.data) as HuffmanTreeNode[])
+
+	while (queue.length > 1) {
+		const left = queue.dequeue()
+		const right = queue.dequeue()
+		queue.queue({
+			frequency: left.frequency + right.frequency,
+			left,
+			right
+		})
+		stages.push(structuredClone(queue.strategy.data) as HuffmanTreeNode[])
+	}
+	return stages
 }
 
 export function createHuffmanTree(frequencies: Frequencies): HuffmanTreeNode {
@@ -60,6 +86,7 @@ export function createHuffmanDictionary(
 	}
 }
 
+// TODO: Fix this function calculation
 export function getHuffmanDictionarySize(dictionary: Dictionary): number {
 	// 8 bits for every symbol, and then 1 bit for the prefix
 	const keys = Object.keys(dictionary).length * 8
