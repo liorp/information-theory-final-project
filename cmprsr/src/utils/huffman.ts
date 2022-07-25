@@ -6,11 +6,11 @@
 import { invertObject } from 'utils'
 import { PriorityQueue } from './priorityQueue'
 
-export interface HuffmanTree {
+export interface HuffmanTreeNode {
 	readonly frequency: number
 	readonly symbols?: string
-	readonly left?: HuffmanTree
-	readonly right?: HuffmanTree
+	readonly left?: HuffmanTreeNode
+	readonly right?: HuffmanTreeNode
 }
 
 export type Frequencies = Map<string, number>
@@ -27,8 +27,8 @@ export function getLetterFrequencies(text: string): Frequencies {
 	return frequencies
 }
 
-export function createHuffmanTree(frequencies: Frequencies): HuffmanTree {
-	const queue = new PriorityQueue<HuffmanTree>({
+export function createHuffmanTree(frequencies: Frequencies): HuffmanTreeNode {
+	const queue = new PriorityQueue<HuffmanTreeNode>({
 		comparator: (a, b) => a.frequency - b.frequency
 	})
 	for (const [symbols, frequency] of frequencies) {
@@ -47,7 +47,7 @@ export function createHuffmanTree(frequencies: Frequencies): HuffmanTree {
 }
 
 export function createHuffmanDictionary(
-	tree?: HuffmanTree,
+	tree?: HuffmanTreeNode,
 	prefix = ''
 ): Dictionary {
 	if (!tree) return {}
@@ -70,21 +70,32 @@ export function getHuffmanDictionarySize(dictionary: Dictionary): number {
 	return keys + values
 }
 
-export function encode(text: string, dictionary: Dictionary): string {
-	return text.replace(
-		/[\d\sA-Za-z]/g,
-		letter => dictionary[letter as keyof typeof dictionary] ?? letter
-	)
+export function encode(
+	text: string
+): [string, Dictionary, Frequencies, HuffmanTreeNode] {
+	const frequencies = getLetterFrequencies(text)
+	const tree = createHuffmanTree(frequencies)
+	const dictionary = createHuffmanDictionary(tree)
+
+	return [
+		text.replace(
+			/[\d\sA-Za-z]/g,
+			letter => dictionary[letter as keyof typeof dictionary] ?? letter
+		),
+		dictionary,
+		frequencies,
+		tree
+	]
 }
 
 export function decode(text: string, dictionary: Dictionary): string {
 	const invertedDictionary = invertObject(dictionary)
-	let decryptedText = ''
+	let decodedText = ''
 	for (let index = 0; index < text.length; index++) {
 		// eslint-disable-next-line @typescript-eslint/naming-convention, no-underscore-dangle
 		for (let index_ = index; index_ < text.length + 1; index_++) {
 			if (text.slice(index, index_) in invertedDictionary) {
-				decryptedText +=
+				decodedText +=
 					invertedDictionary[
 						text.slice(index, index_) as keyof typeof invertedDictionary
 					]
@@ -93,5 +104,5 @@ export function decode(text: string, dictionary: Dictionary): string {
 			}
 		}
 	}
-	return decryptedText
+	return decodedText
 }

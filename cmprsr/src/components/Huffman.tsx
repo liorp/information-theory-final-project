@@ -7,11 +7,11 @@ import type {
 	RawNodeDatum,
 	TreeLinkDatum
 } from 'react-d3-tree/lib/types/common'
-import type { HuffmanTree } from 'utils/huffman'
+import type { HuffmanTreeNode } from 'utils/huffman'
 import { getHuffmanDictionarySize } from 'utils/huffman'
 
 export function parseHuffmanTreeTod3(
-	tree: HuffmanTree,
+	tree: HuffmanTreeNode,
 	prefix = ''
 ): RawNodeDatum {
 	return {
@@ -20,7 +20,7 @@ export function parseHuffmanTreeTod3(
 		children: [tree.left, tree.right]
 			.filter(child => child !== undefined)
 			.map((child, index) =>
-				parseHuffmanTreeTod3(child as HuffmanTree, `${prefix}${index}`)
+				parseHuffmanTreeTod3(child as HuffmanTreeNode, `${prefix}${index}`)
 			)
 	}
 }
@@ -36,7 +36,11 @@ const getDynamicPathClass = ({ source, target }: TreeLinkDatum): string => {
 	return 'link__to-branch'
 }
 
-function HuffmanTreeVisualizer({ tree }: { tree: HuffmanTree }): ReactElement {
+function HuffmanTreeVisualizer({
+	tree
+}: {
+	tree: HuffmanTreeNode
+}): ReactElement {
 	return (
 		<div className='h-full w-full'>
 			<Tree
