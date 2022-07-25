@@ -45,7 +45,7 @@ export default function Home(): ReactElement {
 						CMPRSR
 					</h1>
 				</a>
-				<div className='flex min-h-[30vh] w-full'>
+				<div className='flex min-h-[20vh] w-full'>
 					<textarea
 						id='plaintext'
 						name='plaintext'
@@ -60,13 +60,13 @@ export default function Home(): ReactElement {
 					Compress
 				</button>
 			</form>
-			<div className='carousel rounded-box mx-auto w-3/4 grow'>
+			<div className='carousel rounded-box mx-auto w-5/6 grow'>
 				{textToEncode
 					? encodings.map((Encoding, index) => (
 							<div
 								// eslint-disable-next-line react/no-array-index-key
 								key={index}
-								className='carousel-item m-2'
+								className='carousel-item m-4'
 							>
 								<Encoding plainText={textToEncode} />
 							</div>

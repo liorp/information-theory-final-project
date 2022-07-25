@@ -44,6 +44,7 @@ function HuffmanTreeVisualizer({ tree }: { tree: HuffmanTree }): ReactElement {
 				orientation='vertical'
 				pathFunc='straight'
 				pathClassFunc={getDynamicPathClass}
+				zoom={0.4}
 			/>
 		</div>
 	)
