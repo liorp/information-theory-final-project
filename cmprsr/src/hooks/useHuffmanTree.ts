@@ -1,5 +1,6 @@
-import type { Dictionary, Frequencies, HuffmanTreeNode } from 'utils/huffman'
+import type { Frequencies, HuffmanTreeNode } from 'utils/huffman'
 import { createHuffmanTreeStages, decode, encode } from 'utils/huffman'
+import type { Dictionary } from 'utils/types'
 
 export default function useHuffman(plainText: string): {
 	stages: HuffmanTreeNode[][]
