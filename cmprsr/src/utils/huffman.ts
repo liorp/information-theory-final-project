@@ -4,7 +4,7 @@
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 
-import { invertObject } from 'utils'
+import { invertObject } from 'utils/utils'
 import { PriorityQueue } from './priorityQueue'
 import { Dictionary } from './types'
 

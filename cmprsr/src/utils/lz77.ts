@@ -1,16 +1,9 @@
-/* eslint-disable @typescript-eslint/no-type-alias */
 /* eslint-disable unicorn/filename-case */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable no-plusplus */
 
-type Pointer = [number, number]
-type LZ77Component = [Pointer, string?]
-type LZ77Encoded = LZ77Component[]
-
-const BIT = 1
-const BYTE = 8 * BIT
-const DEFAULT_WINDOW_SIZE = 8
-const NULL_POINTER: Pointer = [0, 0]
+import { DEFAULT_WINDOW_SIZE, MAX_MATCH_LENGTH, NULL_POINTER } from './consts'
+import type { LZ77Encoded } from './types'
 
 export function encode(
 	inputStream: string,
@@ -24,11 +17,7 @@ export function encode(
 	const encodedText: LZ77Encoded = []
 
 	while (lookAheadBuffer.length > 0) {
-		for (
-			let matchLength = 0;
-			matchLength <= lookAheadBuffer.length;
-			matchLength++
-		) {
+		for (let matchLength = 0; matchLength <= MAX_MATCH_LENGTH; matchLength++) {
 			const matchString = lookAheadBuffer.slice(0, matchLength + 1)
 			const matchIndex = window.lastIndexOf(matchString)
 

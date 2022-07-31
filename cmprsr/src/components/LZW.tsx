@@ -11,7 +11,7 @@ export default function LZW({
 
 	return (
 		<div className='card flex w-full max-w-lg flex-col break-all shadow-xl'>
-			<div className='card-body gap-5'>
+			<div className='card-body gap-5 overflow-y-auto'>
 				<div className='card-title'>
 					<h2>LZW</h2>
 				</div>

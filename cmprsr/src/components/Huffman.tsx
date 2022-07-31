@@ -94,7 +94,7 @@ export default function Huffman({
 	const dictionarySize = getHuffmanDictionarySize(dictionary)
 	return (
 		<div className='card flex w-full max-w-lg flex-col break-all shadow-xl'>
-			<div className='card-body gap-5'>
+			<div className='card-body gap-5 overflow-y-auto'>
 				<div className='card-title'>
 					<h2>Huffman</h2>
 				</div>
@@ -105,7 +105,6 @@ export default function Huffman({
 					Frequencies:{' '}
 					{JSON.stringify(Object.fromEntries(frequencies.entries()))}
 				</span>
-
 				<span>
 					Dictionary: {JSON.stringify(dictionary)} Size:{dictionarySize}
 				</span>

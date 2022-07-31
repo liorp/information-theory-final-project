@@ -1,9 +1,8 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable no-plusplus */
-import { transformArrayToObject } from 'utils'
+import { transformArrayToObject } from 'utils/utils'
+import { BASE_DICTIONARY, KB } from './consts'
 import type { Dictionary } from './types'
-
-const BASE_DICTIONARY =
-	" !\"#$%&\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~'"
 
 export function encode(text: string): [number[], Dictionary] {
 	const dictionary = [...BASE_DICTIONARY]
@@ -17,7 +16,9 @@ export function encode(text: string): [number[], Dictionary] {
 			currentString = updatedString
 		} else {
 			encodedText.push(dictionary.indexOf(currentString))
-			dictionary.push(updatedString)
+			if (dictionary.length < 4 * KB) {
+				dictionary.push(updatedString)
+			}
 			currentString = character
 		}
 	}
