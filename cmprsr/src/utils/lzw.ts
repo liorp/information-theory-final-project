@@ -1,49 +1,52 @@
 /* eslint-disable no-plusplus */
+import { transformArrayToObject } from 'utils'
 import type { Dictionary } from './types'
 
-const transformArrayToObject = (dictionary: string[]): Dictionary =>
-	Object.fromEntries(
-		Object.entries(dictionary).map(([key, value]) => [value, key])
-	)
+const BASE_DICTIONARY =
+	" !\"#$%&\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~'"
 
 export function encode(text: string): [number[], Dictionary] {
-	const dictionary = [
-		..." !\"#$%&\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~'"
-	]
+	const dictionary = [...BASE_DICTIONARY]
 	const encodedText: number[] = []
-	let w = ''
+	let currentString = ''
+	let updatedString = ''
 
-	for (const element of text) {
-		if (dictionary.includes(w + element)) {
-			w += element
+	for (const character of `${text}\0`) {
+		updatedString = currentString + character
+		if (dictionary.includes(updatedString)) {
+			currentString = updatedString
 		} else {
-			encodedText.push(dictionary.indexOf(w))
-			dictionary.push(w + element)
-			w = element
+			encodedText.push(dictionary.indexOf(currentString))
+			dictionary.push(updatedString)
+			currentString = character
 		}
 	}
 
 	return [encodedText, transformArrayToObject(dictionary)]
 }
 
-export function decode(text: number[]): [string, Dictionary] {
-	const dictionary = [
-		..." !\"#$%&\\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~'"
-	]
+export function decode(encodedText: number[]): [string, Dictionary] {
+	const dictionary = [...BASE_DICTIONARY]
 
 	let decodedText = ''
 	let w = ''
 
-	for (const element of text) {
-		if (dictionary.includes(`${w}${element}`)) {
-			decodedText += element
-			w += element
-		} else {
-			decodedText += dictionary[w]
-			dictionary.push(`${w}${element}`)
-			w = `${element}`
+	for (const codeword of encodedText) {
+		decodedText += dictionary[codeword]
+		w += dictionary[codeword]
+		if (!dictionary.includes(w)) {
+			dictionary.push(w)
+			w = dictionary[codeword]
 		}
 	}
 
 	return [decodedText, transformArrayToObject(dictionary)]
+}
+
+if (import.meta.vitest) {
+	const { it, expect } = import.meta.vitest
+	it('encode', () => {
+		expect(decode(encode('Hello World')[0])[0]).toEqual('Hello World')
+		expect(decode(encode('Hello Hello')[0])[0]).toEqual('Hello Hello')
+	})
 }
