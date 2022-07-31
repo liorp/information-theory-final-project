@@ -64,7 +64,7 @@ export default function Home(): ReactElement {
 							<div
 								// eslint-disable-next-line react/no-array-index-key
 								key={index}
-								className='carousel-item flex-[0_0_40%] p-4'
+								className='carousel-item prose flex-[0_0_40%] p-4 prose-headings:m-0'
 							>
 								<Encoding plainText={textToEncode} />
 							</div>

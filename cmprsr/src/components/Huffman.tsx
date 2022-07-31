@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react/jsx-handler-names, react/no-array-index-key, @typescript-eslint/no-magic-numbers, react/require-default-props */
 import useHuffman from 'hooks/useHuffmanTree'
 import type { ReactElement } from 'react'
@@ -8,7 +9,7 @@ import type {
 	TreeLinkDatum
 } from 'react-d3-tree/lib/types/common'
 import type { HuffmanTreeNode, HuffmanTreeStages } from 'utils/huffman'
-import { getHuffmanDictionarySize } from 'utils/huffman'
+import Dictionary from './Dictionary'
 
 export function parseHuffmanTreeTod3(
 	tree: HuffmanTreeNode,
@@ -91,7 +92,6 @@ export default function Huffman({
 }): ReactElement {
 	const { stages, frequencies, tree, dictionary, encodedText, decodedText } =
 		useHuffman(plainText)
-	const dictionarySize = getHuffmanDictionarySize(dictionary)
 	return (
 		<div className='card flex w-full max-w-lg flex-col break-all shadow-xl'>
 			<div className='card-body gap-5 overflow-y-auto'>
@@ -99,26 +99,53 @@ export default function Huffman({
 					<h2>Huffman</h2>
 				</div>
 				<span>
-					Encoded Text: {encodedText} Size: {encodedText.length}
+					<h3>Encoded Text</h3>
+					{encodedText}
+				</span>
+				<details>
+					<summary>Frequencies</summary>
+					<Dictionary
+						dictionary={Object.fromEntries(frequencies.entries())}
+						keyHeader='Symbol'
+						valueHeader='Frequency'
+					/>
+				</details>
+				<details>
+					<summary>Dictionary</summary>
+					<Dictionary dictionary={dictionary} />
+				</details>
+				<span>
+					<h3>Compression Ratio</h3>
 				</span>
 				<span>
-					Frequencies:{' '}
-					{JSON.stringify(Object.fromEntries(frequencies.entries()))}
+					<h3>Decoded Text</h3>
+					{decodedText}
 				</span>
-				<span>
-					Dictionary: {JSON.stringify(dictionary)} Size:{dictionarySize}
-				</span>
-				<span>
-					Decoded Text: {decodedText} Size: {decodedText.length * 8}
-				</span>
-				<span>
-					Compression Ratio:{' '}
-					{(encodedText.length + dictionarySize) / (decodedText.length * 8)}{' '}
-				</span>
-				<span>Tree:</span>
-				<HuffmanTreeVisualizer tree={tree} />
-				<span>Stages:</span>
-				<HuffmanTreeStagesVisualizer stages={stages} />
+				<label htmlFor='huffman-visualizer-modal' className='modal-button btn'>
+					Visualize
+				</label>
+
+				<input
+					type='checkbox'
+					id='huffman-visualizer-modal'
+					className='modal-toggle'
+				/>
+				<label
+					htmlFor='huffman-visualizer-modal'
+					className='modal cursor-pointer'
+				>
+					<label
+						className='modal-box h-4/5 max-h-full max-w-full overflow-y-auto'
+						htmlFor=''
+					>
+						<h3>Tree</h3>
+						<div className='h-2/5'>
+							<HuffmanTreeVisualizer tree={tree} />
+						</div>
+						<h3>Stages</h3>
+						<HuffmanTreeStagesVisualizer stages={stages} />
+					</label>
+				</label>
 			</div>
 		</div>
 	)

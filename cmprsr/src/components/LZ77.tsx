@@ -11,16 +11,24 @@ export default function LZ77({
 
 	return (
 		<div className='card flex w-full max-w-lg flex-col break-all shadow-xl'>
-			<div className='card-body gap-5 overflow-y-auto'>
+			<div className='card-body gap-5 overflow-y-auto whitespace-pre-wrap'>
 				<div className='card-title'>
 					<h2>LZ77</h2>
 				</div>
 				<span>
-					Encoded Text: {JSON.stringify(encodedText)} Size: {encodedText.length}
+					<h3>Encoded Text</h3>
+					{JSON.stringify(encodedText)}
 				</span>
 				<span>
-					Decoded Text: {decodedText} Size: {decodedText.length}
+					<h3>Compression Ratio</h3>
 				</span>
+				<span>
+					<h3>Decoded Text</h3>
+					{decodedText}
+				</span>
+				<details>
+					<summary>Visualize This!</summary>
+				</details>
 			</div>
 		</div>
 	)

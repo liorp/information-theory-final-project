@@ -6,7 +6,7 @@
 
 import { invertObject } from 'utils/utils'
 import { PriorityQueue } from './priorityQueue'
-import { Dictionary } from './types'
+import type { Dictionary } from './types'
 
 export interface HuffmanTreeNode {
 	readonly frequency: number
@@ -17,7 +17,6 @@ export interface HuffmanTreeNode {
 
 export type Frequencies = Map<string, number>
 export type HuffmanTreeStages = HuffmanTreeNode[][]
-
 
 export function getLetterFrequencies(text: string): Frequencies {
 	const frequencies = new Map<string, number>()
@@ -83,6 +82,25 @@ export function createHuffmanDictionary(
 		...createHuffmanDictionary(tree.left, `${prefix}0`),
 		...createHuffmanDictionary(tree.right, `${prefix}1`)
 	}
+}
+
+export function getHuffmanTreeSize(root: HuffmanTreeNode): number {
+	size = 0;
+	treeBinaryRepresentation = [];
+	// If root is null, put 0 in
+	// structure array and return
+	if (root == undefined) {
+		treeBinaryRepresentation.push(0)
+		return
+	}
+
+	// Else place 1 in structure array,
+	// key in 'data' array and recur
+	// for left and right children
+	treeBinaryRepresentation.push(1)
+	data.push(root.key)
+	EncodeSuccinct(root.left)
+	EncodeSuccinct(root.right)
 }
 
 // TODO: Fix this function calculation

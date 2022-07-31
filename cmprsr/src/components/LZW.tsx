@@ -1,6 +1,7 @@
 /* eslint-disable unicorn/filename-case */
 import useLZW from 'hooks/useLZW'
 import type { ReactElement } from 'react'
+import Dictionary from './Dictionary'
 
 export default function LZW({
 	plainText
@@ -16,12 +17,23 @@ export default function LZW({
 					<h2>LZW</h2>
 				</div>
 				<span>
-					Encoded Text: {JSON.stringify(encodedText)} Size: {encodedText.length}
+					<h3>Encoded Text</h3>
+					{JSON.stringify(encodedText)}
+				</span>
+				<details>
+					<summary>Dictionary</summary>
+					<Dictionary dictionary={dictionary} />
+				</details>
+				<span>
+					<h3>Compression Ratio</h3>
 				</span>
 				<span>
-					Decoded Text: {decodedText} Size: {decodedText.length}
+					<h3>Decoded Text</h3>
+					{decodedText}
 				</span>
-				<span>Dictionary: {JSON.stringify(dictionary)}</span>
+				<details>
+					<summary>Visualize This!</summary>
+				</details>
 			</div>
 		</div>
 	)
