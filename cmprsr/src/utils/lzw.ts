@@ -29,14 +29,14 @@ export function decode(encodedText: number[]): [string, Dictionary] {
 	const dictionary = [...BASE_DICTIONARY]
 
 	let decodedText = ''
-	let w = ''
+	let currentString = ''
 
 	for (const codeword of encodedText) {
 		decodedText += dictionary[codeword]
-		w += dictionary[codeword]
-		if (!dictionary.includes(w)) {
-			dictionary.push(w)
-			w = dictionary[codeword]
+		currentString += dictionary[codeword]
+		if (!dictionary.includes(currentString)) {
+			dictionary.push(currentString)
+			currentString = dictionary[codeword]
 		}
 	}
 
