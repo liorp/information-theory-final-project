@@ -1,18 +1,23 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable no-plusplus */
 
+const BIT = 1
+const BYTE = 8 * BIT
 const DEFAULT_SEARCH_SIZE = 8
 const DEFAULT_LOOK_AHEAD_SIZE = 8
+const DEFAULT_WINDOW_SIZE = 8 * BYTE
 
 export function encode(
-	text: string,
+	inputStream: string,
 	searchSize: number = DEFAULT_SEARCH_SIZE,
 	lookAheadSize: number = DEFAULT_LOOK_AHEAD_SIZE
 ): [[number, number, string]?] {
 	const encodedText: [[number, number, string]?] = []
 	let search = ''
 	let lookAheadIndex = 0
-	let lookAhead = text.slice(0, lookAheadSize)
+	let lookAhead = inputStream.slice(0, lookAheadSize)
+	const codingPosition = 0
+	const window = ''
 
 	while (lookAhead.length > 0) {
 		// Find best match in the lookahead buffer
@@ -33,8 +38,11 @@ export function encode(
 				break
 			}
 		}
-		lookAhead = text.slice(lookAheadIndex, lookAheadIndex + lookAheadSize)
-		search = text.slice(lookAheadIndex - searchSize, lookAheadIndex)
+		lookAhead = inputStream.slice(
+			lookAheadIndex,
+			lookAheadIndex + lookAheadSize
+		)
+		search = inputStream.slice(lookAheadIndex - searchSize, lookAheadIndex)
 	}
 
 	return encodedText

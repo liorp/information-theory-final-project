@@ -10,14 +10,10 @@ export default defineConfig(({ mode }) => ({
 		include: ['src/**/__tests__/*'],
 		globals: true,
 		environment: 'jsdom',
-		setupFiles: 'src/setupTests.ts',
-		clearMocks: true,
-		coverage: {
-			enabled: true,
-			'100': true,
-			reporter: ['text', 'lcov'],
-			reportsDirectory: 'coverage/jest'
-		}
+		includeSource: ['src/**/*.{js,ts}']
+	},
+	define: {
+		'import.meta.vitest': 'undefined'
 	},
 	plugins: [
 		tsconfigPaths(),
