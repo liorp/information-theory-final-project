@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable no-plusplus */
 /* eslint-disable @typescript-eslint/no-type-alias */
 /* eslint-disable import/prefer-default-export */
@@ -5,6 +6,7 @@
 
 import { invertObject } from 'utils'
 import { PriorityQueue } from './priorityQueue'
+import { Dictionary } from './types'
 
 export interface HuffmanTreeNode {
 	readonly frequency: number
@@ -16,9 +18,6 @@ export interface HuffmanTreeNode {
 export type Frequencies = Map<string, number>
 export type HuffmanTreeStages = HuffmanTreeNode[][]
 
-export interface Dictionary {
-	string?: string
-}
 
 export function getLetterFrequencies(text: string): Frequencies {
 	const frequencies = new Map<string, number>()
