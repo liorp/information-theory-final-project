@@ -14,29 +14,32 @@ export function encode(
 	let lookAheadBuffer = inputStream.slice(codingPosition)
 	let window = ''
 	let pointer = NULL_POINTER
+	let forward = 0
 	const encodedText: LZSSEncoded = []
 
 	while (lookAheadBuffer.length > 0) {
-		for (let matchLength = 0; matchLength <= MAX_MATCH_LENGTH; matchLength++) {
+		for (let matchLength = 2; matchLength <= MAX_MATCH_LENGTH; matchLength++) {
 			const matchString = lookAheadBuffer.slice(0, matchLength + 1)
 			const matchIndex = window.lastIndexOf(matchString)
 
 			// Find the longest match in the window for the lookahead buffer
 			if (matchIndex === -1 || matchLength === lookAheadBuffer.length) {
-				if (matchLength > 0) {
-					// If a match is found, output the pointer P, move the coding position (and the window) L bytes forward.
+				if (matchLength > 2) {
+					// If a match is found, output the pointer P, move forward the coding position (and the window).
+					// NOTE: In lzss, we only consider lengths bigger than 3
 					pointer = [
+						matchLength,
 						window.length -
-							window.lastIndexOf(lookAheadBuffer.slice(0, matchLength)),
-						matchLength
+							window.lastIndexOf(lookAheadBuffer.slice(0, matchLength))
 					]
-					encodedText.push([pointer])
+					encodedText.push(pointer)
+					forward = matchLength
 				} else {
-					// If a match is not found, output a null pointer and the first byte in the lookahead buffer. Move the coding position (and the window) one byte forward.
-					pointer = NULL_POINTER
-					encodedText.push([pointer, lookAheadBuffer[0]])
+					// If a match is not found, output the first byte in the lookahead buffer. Move the coding position (and the window) forward.
+					encodedText.push(lookAheadBuffer[0])
+					forward = 1
 				}
-				codingPosition += Math.max(1, matchLength)
+				codingPosition += forward
 				lookAheadBuffer = inputStream.slice(codingPosition)
 				window = inputStream.slice(
 					Math.max(0, codingPosition - windowSize),
@@ -64,13 +67,16 @@ if (import.meta.vitest) {
 	})
 }
 
-export function decode(encodedText: LZ77Encoded): string {
+export function decode(encodedText: LZSSEncoded): string {
 	let decodedText = ''
-	for (const [pointer, character] of encodedText) {
-		const [pointerIndex, pointerLength] = pointer
-		const matchStart = decodedText.length - pointerIndex
-		decodedText +=
-			character ?? decodedText.slice(matchStart, matchStart + pointerLength)
+	for (const component of encodedText) {
+		if (Array.isArray(component)) {
+			const [pointerLength, pointerIndex] = component
+			const matchStart = decodedText.length - pointerIndex
+			decodedText += decodedText.slice(matchStart, matchStart + pointerLength)
+		} else {
+			decodedText += component
+		}
 	}
 	return decodedText
 }

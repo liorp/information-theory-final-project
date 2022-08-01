@@ -1,9 +1,9 @@
 /* eslint-disable unicorn/filename-case */
-import { decode, encode } from 'utils/lz77'
-import type { LZ77Encoded } from 'utils/types'
+import { decode, encode } from 'utils/lzss'
+import type { LZSSEncoded } from 'utils/types'
 
-export default function uzeLZ77(plainText: string): {
-	encodedText: LZ77Encoded
+export default function uzeLZSS(plainText: string): {
+	encodedText: LZSSEncoded
 	decodedText: string
 } {
 	const encodedText = encode(plainText)

@@ -2,13 +2,13 @@
 /* eslint-disable react/jsx-handler-names, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 import Footer from 'components/Footer'
 import Huffman from 'components/Huffman'
-import LZ77 from 'components/LZ77'
+import LZSS from 'components/LZSS'
 import LZW from 'components/LZW'
 import type { ReactElement } from 'react'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-const encodings = [Huffman, LZ77, LZW]
+const encodings = [Huffman, LZSS, LZW]
 
 export default function Home(): ReactElement {
 	const [searchParameters, setSearchParameters] = useSearchParams()

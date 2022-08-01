@@ -16,3 +16,8 @@ export const transformArrayToObject = (dictionary: string[]): Dictionary =>
 	Object.fromEntries(
 		Object.entries(dictionary).map(([key, value]) => [value, key])
 	)
+export const range = (start: number, stop: number, step = 1): number[] =>
+	Array.from(
+		{ length: (stop - start - 1) / step + 1 },
+		(_, index) => start + index * step
+	)

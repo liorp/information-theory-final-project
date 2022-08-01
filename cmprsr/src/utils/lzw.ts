@@ -45,7 +45,6 @@ export function encode(text: string): [string, number[], Dictionary] {
 	return [encodedText, encodedTextArray, transformArrayToObject(dictionary)]
 }
 
-// TODO: Bug in decoding!
 export function decode(encodedText: number[]): [string, Dictionary] {
 	const dictionary = [...BASE_DICTIONARY]
 	let decodedText = dictionary[encodedText[0]]
