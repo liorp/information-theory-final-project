@@ -26,7 +26,7 @@ export function compress(text: string): [string, number[], Dictionary] {
 	let stringCode = 0
 
 	for (const character of `${text}\0`) {
-		updatedString = currentString + character
+		updatedString = (currentString + character).replace('\0', '')
 		if (dictionary.includes(updatedString)) {
 			currentString = updatedString
 		} else {
