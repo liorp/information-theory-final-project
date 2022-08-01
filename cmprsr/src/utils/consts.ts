@@ -47,23 +47,23 @@ const DISTANCE_ARRAY: (number | string)[] = [
 		range(2 ** index + 1, 2 ** (index + 1) + 1).map(
 			_index =>
 				`${Math.trunc((_index - (2 ** index + 1)) / 2) + 2 * index} ${
-					(_index - (2 ** index + 1)) % (2 ** (index - 1))
+					(_index - (2 ** index + 1)) % 2 ** (index - 1)
 				}`
 		)
 	)
 ].flat()
 
-for (let index = 1; index < 13; index++) {
-	DISTANCE_ARRAY = [
-		...DISTANCE_ARRAY,
-		...range(2 ** index + 1, 2 ** (index + 1) + 1).map(
-			_index =>
-				`${Math.trunc((_index - (2 ** index + 1)) / 2) + 2 * index} ${
-					(_index - (2 ** (index + 1) + 1)) % 2 ** (index + 1)
-				}`
-		)
-	]
-}
+// for (let index = 1; index < 13; index++) {
+// 	DISTANCE_ARRAY = [
+// 		...DISTANCE_ARRAY,
+// 		...range(2 ** index + 1, 2 ** (index + 1) + 1).map(
+// 			_index =>
+// 				`${Math.trunc((_index - (2 ** index + 1)) / 2) + 2 * index} ${
+// 					(_index - (2 ** (index + 1) + 1)) % 2 ** (index + 1)
+// 				}`
+// 		)
+// 	]
+// }
 
 // export const DISTANCE_ARRAY = [
 // 	...range(1, 5).map(index => index - 1),
