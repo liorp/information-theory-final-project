@@ -67,6 +67,7 @@ export default function LZW({
 			<div className='card-body gap-5 overflow-y-auto'>
 				<CompressionSummary
 					name='LZW'
+					href='https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Welch_compression'
 					compressed={compressed}
 					compressionRatio={1}
 					decompressed={decompressed}

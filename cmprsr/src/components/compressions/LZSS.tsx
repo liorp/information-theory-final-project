@@ -14,6 +14,7 @@ export default function LZSS({
 			<div className='card-body gap-5 overflow-y-auto whitespace-pre-wrap'>
 				<CompressionSummary
 					name='LZSS'
+					href='https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Storer%E2%80%93Szymanski_algorithm'
 					compressed={JSON.stringify(compressed)}
 					compressionRatio={1}
 					decompressed={decompressed}

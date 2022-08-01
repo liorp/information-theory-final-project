@@ -13,6 +13,7 @@ import { getHuffmanTreeSize, getHuffmanTreeString } from 'utils/huffman'
 import { symbolPrettyPrint } from 'utils/utils'
 import CompressionSummary from './CompressionSummary'
 import Dictionary from './Dictionary'
+import InfoButton from './InfoButton'
 
 export function parseHuffmanTreeTod3(
 	tree: HuffmanTreeNode,
@@ -109,6 +110,7 @@ export default function Huffman({
 			<div className='card-body gap-5 overflow-y-auto'>
 				<CompressionSummary
 					name='Huffman'
+					href='https://en.wikipedia.org/wiki/Huffman_coding'
 					compressed={compressed}
 					compressionRatio={
 						(treeSize + compressed.length) / (decompressed.length * BYTE)
@@ -143,21 +145,10 @@ export default function Huffman({
 					<div className='divider' />
 					<div className='flex items-center gap-1'>
 						<h3 className='w-fit'>Stages</h3>
-						<button
-							type='button'
-							className='btn tooltip tooltip-right btn-circle btn-xs'
-							data-tip='This shows the next two trees that are about to be merged'
-						>
-							<svg
-								xmlns='http://www.w3.org/2000/svg'
-								className='h-6 w-6'
-								fill='currentColor'
-								viewBox='0 0 16 16'
-								stroke='none'
-							>
-								<path d='m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z' />
-							</svg>
-						</button>
+						<InfoButton
+							tooltip='Stages are the different steps of the Huffman coding compression algorithm. This shows the next two trees that are about to be merged'
+							direction='right'
+						/>
 					</div>
 					<HuffmanTreeStagesVisualizer stages={stages} />
 					<div className='divider' />
