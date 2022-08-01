@@ -9,6 +9,7 @@ import type {
 	TreeLinkDatum
 } from 'react-d3-tree/lib/types/common'
 import type { HuffmanTreeNode, HuffmanTreeStages } from 'utils/huffman'
+import { getHuffmanTreeSize } from 'utils/huffman'
 import Dictionary from './Dictionary'
 
 export function parseHuffmanTreeTod3(
@@ -77,7 +78,7 @@ function HuffmanTreeStagesVisualizer({
 				))}
 			</div>
 			<div className='flex grow gap-5'>
-				{stages[selectedStage].map((tree, index) => (
+				{stages[selectedStage].slice(0, 2).map((tree, index) => (
 					<HuffmanTreeVisualizer key={index} tree={tree} />
 				))}
 			</div>
@@ -92,6 +93,7 @@ export default function Huffman({
 }): ReactElement {
 	const { stages, frequencies, tree, dictionary, encodedText, decodedText } =
 		useHuffman(plainText)
+	const size = getHuffmanTreeSize(tree)
 	return (
 		<div className='card flex w-full max-w-lg flex-col break-all shadow-xl'>
 			<div className='card-body gap-5 overflow-y-auto'>
@@ -145,7 +147,7 @@ export default function Huffman({
 						/>
 					</details>
 					<details>
-						<summary>Dictionary</summary>
+						<summary>Dictionary ({size} bytes)</summary>
 						<Dictionary dictionary={dictionary} />
 					</details>
 				</label>

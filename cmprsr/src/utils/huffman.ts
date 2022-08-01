@@ -5,9 +5,9 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 
 import { invertObject } from 'utils/utils'
+import { BYTE } from './consts'
 import { PriorityQueue } from './priorityQueue'
 import type { Dictionary } from './types'
-import { BYTE } from './consts'
 
 export interface HuffmanTreeNode {
 	readonly frequency: number
@@ -85,27 +85,20 @@ export function createHuffmanDictionary(
 	}
 }
 
-export function getHuffmanTreeSize(root: HuffmanTreeNode): number {
+export function getHuffmanTreeSize(root?: HuffmanTreeNode): number {
 	// Leafs are represented as 0, other nodes are represented as 1
+	// If we try accessing a non-existing child, we return 0
+	if (root === undefined) {
+		return 0
+	}
 
 	// If root is a leaf, it takes 1 (leaf bit) + BYTE (typically 8) bits to represent it
 	if (root.left === undefined && root.right === undefined) {
-		return 1 + BYTE;
+		return 1 + BYTE
 	}
 
 	// Else, root is not a leaf, so it takes 1 bit to represent it
-	return 1 + getHuffmanTreeSize(root.left) + getHuffmanTreeSize(root.right);
-}
-
-// TODO: Fix this function calculation
-export function getHuffmanDictionarySize(dictionary: Dictionary): number {
-	// 8 bits for every symbol, and then 1 bit for the prefix
-	const keys = Object.keys(dictionary).length * 8
-	const values = Object.values(dictionary).reduce(
-		(accumulator: number, value: string) => accumulator + value.length,
-		0
-	) as number
-	return keys + values
+	return 1 + getHuffmanTreeSize(root.left) + getHuffmanTreeSize(root.right)
 }
 
 export function encode(
