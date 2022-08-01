@@ -43,8 +43,12 @@ export default function Home(): ReactElement {
 					}
 				}}
 			>
-				<a href='/' className='h-min w-min'>
-					<h1 className='text-gradient !mb-0 h-min w-min transform bg-green-300 font-vt323 transition hover:-rotate-6'>
+				<a href='/' className='h-min w-1/4'>
+					<h1
+						className={`text-gradient ${
+							textToCompress ? '' : 'blink-cursor'
+						} !mb-0 h-min transform bg-green-300 font-vt323`}
+					>
 						CMPRSR
 					</h1>
 				</a>
