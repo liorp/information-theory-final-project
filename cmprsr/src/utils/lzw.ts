@@ -48,17 +48,20 @@ export function encode(text: string): [string, number[], Dictionary] {
 // TODO: Bug in decoding!
 export function decode(encodedText: number[]): [string, Dictionary] {
 	const dictionary = [...BASE_DICTIONARY]
-
 	let decodedText = dictionary[encodedText[0]]
-	let currentString = ''
+	let phrase = ''
 
-	for (const codeword of encodedText.slice(1)) {
-		decodedText += dictionary[codeword]
-		currentString += dictionary[codeword]
-		if (!dictionary.includes(currentString)) {
-			dictionary.push(currentString)
-			currentString = dictionary[codeword]
+	let current = dictionary[encodedText[0]]
+	let old = dictionary[encodedText[0]]
+
+	for (const code of encodedText.slice(1)) {
+		phrase = code in dictionary ? dictionary[code] : old + current
+		decodedText += phrase
+		current = phrase.charAt(0)
+		if (dictionary.length < 4 * KB) {
+			dictionary.push(old + current)
 		}
+		old = phrase
 	}
 
 	return [decodedText, transformArrayToObject(dictionary)]
@@ -67,8 +70,10 @@ export function decode(encodedText: number[]): [string, Dictionary] {
 if (import.meta.vitest) {
 	const { it, expect } = import.meta.vitest
 	it('encode', () => {
-		// expect(decode(encode('Hello World')[1])[0]).toEqual('Hello World')
-		// expect(decode(encode('Hello Hello')[1])[0]).toEqual('Hello Hello')
+		expect(decode(encode('Hello World')[1])[0]).toEqual('Hello World')
+		expect(decode(encode('Hello Hello Hello')[1])[0]).toEqual(
+			'Hello Hello Hello'
+		)
 		expect(decode(encode('fffaa')[1])[0]).toEqual('fffaa')
 		expect(decode(encode('hellofffasdf')[1])[0]).toEqual('hellofffasdf')
 	})
