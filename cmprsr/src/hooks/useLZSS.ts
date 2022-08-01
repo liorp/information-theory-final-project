@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/filename-case */
 import { compress, decompress } from 'utils/lzss'
 import type { LZSSCompressed } from 'utils/types'
 

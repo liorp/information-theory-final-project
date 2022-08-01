@@ -1,4 +1,3 @@
-/* eslint-disable react/require-default-props */
 import type { ReactElement } from 'react'
 import type { Dictionary as DictionaryType } from 'utils/types'
 

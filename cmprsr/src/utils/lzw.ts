@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
-/* eslint-disable no-plusplus */
 import { transformArrayToObject } from 'utils/utils'
 import { BASE_DICTIONARY, KB } from './consts'
 import type { Dictionary } from './types'
@@ -67,13 +65,16 @@ export function decompress(compressed: number[]): [string, Dictionary] {
 }
 
 if (import.meta.vitest) {
-	const { it, expect } = import.meta.vitest
-	it('compress', () => {
-		expect(decompress(compress('Hello World')[1])[0]).toEqual('Hello World')
-		expect(decompress(compress('Hello Hello Hello')[1])[0]).toEqual(
-			'Hello Hello Hello'
-		)
-		expect(decompress(compress('fffaa')[1])[0]).toEqual('fffaa')
-		expect(decompress(compress('hellofffasdf')[1])[0]).toEqual('hellofffasdf')
+	const { it, expect, describe } = import.meta.vitest
+	describe('lzw', () => {
+		it('compresses and decompresses', () => {
+			expect(decompress(compress('AABCBBABC')[1])[0]).toEqual('AABCBBABC')
+			expect(decompress(compress('Hello World')[1])[0]).toEqual('Hello World')
+			expect(decompress(compress('Hello Hello Hello')[1])[0]).toEqual(
+				'Hello Hello Hello'
+			)
+			expect(decompress(compress('fffaa')[1])[0]).toEqual('fffaa')
+			expect(decompress(compress('hellofffasdf')[1])[0]).toEqual('hellofffasdf')
+		})
 	})
 }

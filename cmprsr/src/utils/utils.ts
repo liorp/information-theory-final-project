@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
-/* eslint-disable import/prefer-default-export */
-
 import type { Dictionary } from 'utils/types'
 
 export const lz = (text: string): [string, string] => [text, text]

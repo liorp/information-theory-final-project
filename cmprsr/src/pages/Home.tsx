@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
-/* eslint-disable @typescript-eslint/no-misused-promises */
-/* eslint-disable react/jsx-handler-names, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access */
 import Huffman from 'components/compressions/Huffman'
 import LZSS from 'components/compressions/LZSS'
 import LZW from 'components/compressions/LZW'
@@ -9,7 +6,7 @@ import type { ReactElement } from 'react'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-const encodings = [Huffman, LZSS, LZW]
+const encodings = [{name: "huffman", Component: Huffman}, {name: "lzss", Component: LZSS, {name: "lzw", Component: LZW}]
 
 export default function Home(): ReactElement {
 	const [searchParameters, setSearchParameters] = useSearchParams()
@@ -24,15 +21,18 @@ export default function Home(): ReactElement {
 				onSubmit={async (event): Promise<void> => {
 					event.preventDefault()
 
-					const nextPlaintext = (event.target as HTMLFormElement).elements
-						.plaintext.value as string
+					const nextPlaintext = (
+						(event.target as HTMLFormElement).elements
+							.plaintext as HTMLTextAreaElement
+					).value
 					setSearchParameters({
 						plaintext: nextPlaintext
 					})
 					setTextToCompress(nextPlaintext)
-					const { files } = (event.target as HTMLFormElement).elements.plainfile
-					if (files.length > 0) {
-						const file = files[0] as File
+					const { files } = (event.target as HTMLFormElement).elements
+						.plainfile as HTMLInputElement
+					if (files && files.length > 0) {
+						const file = files[0]
 						if (file.type === 'text/plain') {
 							setTextToCompress(await file.text())
 						}
@@ -51,11 +51,15 @@ export default function Home(): ReactElement {
 						className='textarea grow'
 						placeholder='Enter your text here'
 						defaultValue={`${plaintext ?? ''}`}
-						onKeyDown={event => {
-							if (event.key === 'Enter' && !event.shiftKey) {
+						onKeyDown={(event): void => {
+							if (
+								event.key === 'Enter' &&
+								!event.shiftKey &&
+								event.nativeEvent.target
+							) {
 								event.preventDefault()
 								;(
-									event.nativeEvent.target?.parentNode
+									(event.nativeEvent.target as Element).parentNode
 										.parentNode as HTMLFormElement
 								).requestSubmit()
 							}
@@ -70,13 +74,12 @@ export default function Home(): ReactElement {
 			</form>
 			<div className='carousel rounded-box w-5/6 grow'>
 				{textToCompress
-					? encodings.map((Encoding, index) => (
+					? encodings.map(({name, Component}) => (
 							<div
-								// eslint-disable-next-line react/no-array-index-key
-								key={index}
+								key={name}
 								className='carousel-item prose flex-[0_0_40%] p-4 prose-headings:m-0'
 							>
-								<Encoding plainText={textToCompress} />
+								<Component plainText={textToCompress} />
 							</div>
 					  ))
 					: undefined}

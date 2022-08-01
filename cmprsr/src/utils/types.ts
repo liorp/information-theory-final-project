@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-type-alias */
 /** Basic */
 /** {[symbol]: [codeword]}, e.g. {"a": 1} */
 export interface Dictionary {

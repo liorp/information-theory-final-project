@@ -1,6 +1,3 @@
-/* eslint-disable unicorn/filename-case */
-/* eslint-disable jsx-a11y/label-has-associated-control */
-/* eslint-disable unicorn/filename-case */
 import useLZSS from 'hooks/useLZSS'
 import type { ReactElement } from 'react'
 import CompressionSummary from './CompressionSummary'

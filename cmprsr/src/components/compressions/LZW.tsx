@@ -1,6 +1,3 @@
-/* eslint-disable unicorn/filename-case */
-/* eslint-disable jsx-a11y/label-has-associated-control */
-/* eslint-disable unicorn/filename-case */
 import useLZW from 'hooks/useLZW'
 import type { ReactElement } from 'react'
 import CompressionSummary from './CompressionSummary'
@@ -11,7 +8,7 @@ export default function LZW({
 }: {
 	plainText: string
 }): ReactElement {
-	const { dictionary, compressed, decompressed, decompressedArray } =
+	const { dictionary, compressed, decompressed, compressedArray } =
 		useLZW(plainText)
 
 	return (
@@ -42,7 +39,7 @@ export default function LZW({
 					htmlFor=''
 				>
 					<h3>Compressed Bytes Array</h3>
-					{JSON.stringify(decompressedArray)}
+					{JSON.stringify(compressedArray)}
 					<h3>Dictionary</h3>
 					<Dictionary dictionary={dictionary} />
 				</label>

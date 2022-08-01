@@ -1,9 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable no-plusplus */
-/* eslint-disable @typescript-eslint/no-type-alias */
-/* eslint-disable import/prefer-default-export */
-/* eslint-disable @typescript-eslint/no-magic-numbers */
-
 import { invertObject } from 'utils/utils'
 import { BYTE } from './consts'
 import { PriorityQueue } from './priorityQueue'
@@ -85,6 +79,24 @@ export function createHuffmanDictionary(
 	}
 }
 
+export function getHuffmanTreeString(root?: HuffmanTreeNode): string {
+	// Leafs are represented as 0, other nodes are represented as 1
+	// If we try accessing a non-existing child, we return 0
+	if (root === undefined) {
+		return '0'
+	}
+
+	// If root is a leaf, it takes 1 (leaf bit) + BYTE (typically 8) bits to represent it
+	if (root.left === undefined && root.right === undefined) {
+		return `0${root.symbols ?? ''}`
+	}
+
+	// Else, root is not a leaf, so it takes 1 bit to represent it
+	return `1${getHuffmanTreeString(root.left)}${getHuffmanTreeString(
+		root.right
+	)}`
+}
+
 /** Returns size in bits */
 export function getHuffmanTreeSize(root?: HuffmanTreeNode): number {
 	// Leafs are represented as 0, other nodes are represented as 1
@@ -124,17 +136,31 @@ export function decompress(text: string, dictionary: Dictionary): string {
 	const invertedDictionary = invertObject(dictionary)
 	let decompressed = ''
 	for (let index = 0; index < text.length; index++) {
-		// eslint-disable-next-line @typescript-eslint/naming-convention, no-underscore-dangle
-		for (let index_ = index; index_ < text.length + 1; index_++) {
-			if (text.slice(index, index_) in invertedDictionary) {
+		for (let innerIndex = index; innerIndex < text.length + 1; innerIndex++) {
+			if (text.slice(index, innerIndex) in invertedDictionary) {
 				decompressed +=
 					invertedDictionary[
-						text.slice(index, index_) as keyof typeof invertedDictionary
+						text.slice(index, innerIndex) as keyof typeof invertedDictionary
 					]
-				index = index_ - 1
+				index = innerIndex - 1
 				break
 			}
 		}
 	}
 	return decompressed
+}
+
+if (import.meta.vitest) {
+	const { it, expect, describe } = import.meta.vitest
+	describe('huffman', () => {
+		it('compresses and decompresses', () => {
+			expect(decompress(...compress('AABCBBABC'))).toEqual('AABCBBABC')
+			expect(decompress(...compress('Hello World'))).toEqual('Hello World')
+			expect(decompress(...compress('Hello Hello Hello'))).toEqual(
+				'Hello Hello Hello'
+			)
+			expect(decompress(...compress('fffaa'))).toEqual('fffaa')
+			expect(decompress(...compress('hellofffasdf'))).toEqual('hellofffasdf')
+		})
+	})
 }

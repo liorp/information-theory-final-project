@@ -1,6 +1,3 @@
-/* eslint-disable no-plusplus */
-/* eslint-disable @typescript-eslint/no-magic-numbers */
-
 import type { LZSSPointer } from './types'
 import { range } from './utils'
 

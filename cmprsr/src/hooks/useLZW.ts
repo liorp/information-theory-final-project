@@ -1,4 +1,3 @@
-/* eslint-disable unicorn/filename-case */
 import { compress, decompress } from 'utils/lzw'
 import type { Dictionary } from 'utils/types'
 

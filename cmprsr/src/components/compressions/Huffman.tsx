@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
-/* eslint-disable react/jsx-handler-names, react/no-array-index-key, @typescript-eslint/no-magic-numbers, react/require-default-props */
 import useHuffman from 'hooks/useHuffman'
 import type { ReactElement } from 'react'
 import { useState } from 'react'
@@ -8,8 +6,9 @@ import type {
 	RawNodeDatum,
 	TreeLinkDatum
 } from 'react-d3-tree/lib/types/common'
+import { BYTE } from 'utils/consts'
 import type { HuffmanTreeNode, HuffmanTreeStages } from 'utils/huffman'
-import { getHuffmanTreeSize } from 'utils/huffman'
+import { getHuffmanTreeSize, getHuffmanTreeString } from 'utils/huffman'
 import CompressionSummary from './CompressionSummary'
 import Dictionary from './Dictionary'
 
@@ -67,7 +66,7 @@ function HuffmanTreeStagesVisualizer({
 	return (
 		<>
 			<div className='btn-group m-4'>
-				{stages.map((stage, index) => (
+				{[...Array.from({ length: stages.length }).keys()].map(index => (
 					<button
 						key={index}
 						type='button'
@@ -79,8 +78,8 @@ function HuffmanTreeStagesVisualizer({
 				))}
 			</div>
 			<div className='flex grow gap-5'>
-				{stages[selectedStage].slice(0, 2).map((tree, index) => (
-					<HuffmanTreeVisualizer key={index} tree={tree} />
+				{stages[selectedStage].slice(0, 2).map(tree => (
+					<HuffmanTreeVisualizer key={getHuffmanTreeString(tree)} tree={tree} />
 				))}
 			</div>
 		</>
@@ -102,7 +101,7 @@ export default function Huffman({
 					name='Huffman'
 					compressed={compressed}
 					compressionRatio={
-						(treeSize + compressed.length) / (decompressed.length * 8)
+						(treeSize + compressed.length) / (decompressed.length * BYTE)
 					}
 					decompressed={decompressed}
 				/>
