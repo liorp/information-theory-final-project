@@ -6,7 +6,11 @@ import type { ReactElement } from 'react'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 
-const encodings = [{name: "huffman", Component: Huffman}, {name: "lzss", Component: LZSS, {name: "lzw", Component: LZW}]
+const encodings = [
+	{ name: 'huffman', Component: Huffman },
+	{ name: 'lzss', Component: LZSS },
+	{ name: 'lzw', Component: LZW }
+]
 
 export default function Home(): ReactElement {
 	const [searchParameters, setSearchParameters] = useSearchParams()
@@ -74,7 +78,7 @@ export default function Home(): ReactElement {
 			</form>
 			<div className='carousel rounded-box w-5/6 grow'>
 				{textToCompress
-					? encodings.map(({name, Component}) => (
+					? encodings.map(({ name, Component }) => (
 							<div
 								key={name}
 								className='carousel-item prose flex-[0_0_40%] p-4 prose-headings:m-0'
