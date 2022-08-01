@@ -8,4 +8,4 @@ export interface Dictionary {
 /** LZSS */
 export type LZSSPointer = [number, number]
 export type LZSSComponent = LZSSPointer | string
-export type LZSSEncoded = LZSSComponent[]
+export type LZSSCompressed = LZSSComponent[]

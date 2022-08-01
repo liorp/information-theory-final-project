@@ -3,31 +3,24 @@
 /* eslint-disable unicorn/filename-case */
 import useLZSS from 'hooks/useLZSS'
 import type { ReactElement } from 'react'
+import CompressionSummary from './CompressionSummary'
 
 export default function LZSS({
 	plainText
 }: {
 	plainText: string
 }): ReactElement {
-	const { encodedText, decodedText } = useLZSS(plainText)
+	const { compressed, decompressed } = useLZSS(plainText)
 
 	return (
 		<div className='group card flex w-full max-w-lg flex-col break-all shadow-xl'>
 			<div className='card-body gap-5 overflow-y-auto whitespace-pre-wrap'>
-				<div className='card-title'>
-					<h2>LZSS</h2>
-				</div>
-				<span>
-					<h3>Encoded Text</h3>
-					{JSON.stringify(encodedText)}
-				</span>
-				<span>
-					<h3>Compression Ratio</h3>
-				</span>
-				<span>
-					<h3>Decoded Text</h3>
-					{decodedText}
-				</span>
+				<CompressionSummary
+					name='LZSS'
+					compressed={JSON.stringify(compressed)}
+					compressionRatio={1}
+					decompressed={decompressed}
+				/>
 			</div>
 			<label
 				htmlFor='lzss-visualizer-modal'

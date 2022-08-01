@@ -3,6 +3,7 @@
 /* eslint-disable unicorn/filename-case */
 import useLZW from 'hooks/useLZW'
 import type { ReactElement } from 'react'
+import CompressionSummary from './CompressionSummary'
 import Dictionary from './Dictionary'
 
 export default function LZW({
@@ -10,26 +11,18 @@ export default function LZW({
 }: {
 	plainText: string
 }): ReactElement {
-	const { dictionary, encodedText, decodedText, encodedTextArray } =
+	const { dictionary, compressed, decompressed, decompressedArray } =
 		useLZW(plainText)
 
 	return (
 		<div className='group card flex w-full max-w-lg flex-col break-all shadow-xl'>
 			<div className='card-body gap-5 overflow-y-auto'>
-				<div className='card-title'>
-					<h2>LZW</h2>
-				</div>
-				<span>
-					<h3>Encoded Text</h3>
-					{encodedText}
-				</span>
-				<span>
-					<h3>Compression Ratio</h3>
-				</span>
-				<span>
-					<h3>Decoded Text</h3>
-					{decodedText}
-				</span>
+				<CompressionSummary
+					name='LZW'
+					compressed={compressed}
+					compressionRatio={1}
+					decompressed={decompressed}
+				/>
 			</div>
 			<label
 				htmlFor='lzw-visualizer-modal'
@@ -48,8 +41,8 @@ export default function LZW({
 					className='modal-box flex h-4/5 max-h-full max-w-full flex-col overflow-y-auto'
 					htmlFor=''
 				>
-					<h3>Encoded Text Array</h3>
-					{JSON.stringify(encodedTextArray)}
+					<h3>Compressed Bytes Array</h3>
+					{JSON.stringify(decompressedArray)}
 					<h3>Dictionary</h3>
 					<Dictionary dictionary={dictionary} />
 				</label>

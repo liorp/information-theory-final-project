@@ -3,19 +3,19 @@
 /* eslint-disable no-plusplus */
 
 import { DEFAULT_WINDOW_SIZE, MAX_MATCH_LENGTH, NULL_POINTER } from './consts'
-import type { LZSSEncoded } from './types'
+import type { LZSSCompressed } from './types'
 
-export function encode(
+export function compress(
 	inputStream: string,
 	windowSize: number = DEFAULT_WINDOW_SIZE
-): LZSSEncoded {
+): LZSSCompressed {
 	// Set the coding position to the beginning of the input stream
 	let codingPosition = 0
 	let lookAheadBuffer = inputStream.slice(codingPosition)
 	let window = ''
 	let pointer = NULL_POINTER
 	let forward = 0
-	const encodedText: LZSSEncoded = []
+	const compressed: LZSSCompressed = []
 
 	while (lookAheadBuffer.length > 0) {
 		for (let matchLength = 2; matchLength <= MAX_MATCH_LENGTH; matchLength++) {
@@ -32,11 +32,11 @@ export function encode(
 						window.length -
 							window.lastIndexOf(lookAheadBuffer.slice(0, matchLength))
 					]
-					encodedText.push(pointer)
+					compressed.push(pointer)
 					forward = matchLength
 				} else {
 					// If a match is not found, output the first byte in the lookahead buffer. Move the coding position (and the window) forward.
-					encodedText.push(lookAheadBuffer[0])
+					compressed.push(lookAheadBuffer[0])
 					forward = 1
 				}
 				codingPosition += forward
@@ -49,13 +49,13 @@ export function encode(
 			}
 		}
 	}
-	return encodedText
+	return compressed
 }
 
 if (import.meta.vitest) {
 	const { it, expect } = import.meta.vitest
-	it('encode', () => {
-		expect(encode('AABCBBABC')).toEqual([
+	it('compress', () => {
+		expect(compress('AABCBBABC')).toEqual([
 			[[0, 0], 'A'],
 			[[1, 1]],
 			[[0, 0], 'B'],
@@ -67,25 +67,25 @@ if (import.meta.vitest) {
 	})
 }
 
-export function decode(encodedText: LZSSEncoded): string {
-	let decodedText = ''
-	for (const component of encodedText) {
+export function decompress(compressed: LZSSCompressed): string {
+	let decompressed = ''
+	for (const component of compressed) {
 		if (Array.isArray(component)) {
 			const [pointerLength, pointerIndex] = component
-			const matchStart = decodedText.length - pointerIndex
-			decodedText += decodedText.slice(matchStart, matchStart + pointerLength)
+			const matchStart = decompressed.length - pointerIndex
+			decompressed += decompressed.slice(matchStart, matchStart + pointerLength)
 		} else {
-			decodedText += component
+			decompressed += component
 		}
 	}
-	return decodedText
+	return decompressed
 }
 
 if (import.meta.vitest) {
 	const { it, expect } = import.meta.vitest
-	it('decode', () => {
+	it('decompress', () => {
 		expect(
-			decode([
+			decompress([
 				[[0, 0], 'A'],
 				[[1, 1]],
 				[[0, 0], 'B'],

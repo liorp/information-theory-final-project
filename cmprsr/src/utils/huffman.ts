@@ -85,6 +85,7 @@ export function createHuffmanDictionary(
 	}
 }
 
+/** Returns size in bits */
 export function getHuffmanTreeSize(root?: HuffmanTreeNode): number {
 	// Leafs are represented as 0, other nodes are represented as 1
 	// If we try accessing a non-existing child, we return 0
@@ -101,7 +102,7 @@ export function getHuffmanTreeSize(root?: HuffmanTreeNode): number {
 	return 1 + getHuffmanTreeSize(root.left) + getHuffmanTreeSize(root.right)
 }
 
-export function encode(
+export function compress(
 	text: string
 ): [string, Dictionary, Frequencies, HuffmanTreeNode] {
 	const frequencies = getLetterFrequencies(text)
@@ -119,14 +120,14 @@ export function encode(
 	]
 }
 
-export function decode(text: string, dictionary: Dictionary): string {
+export function decompress(text: string, dictionary: Dictionary): string {
 	const invertedDictionary = invertObject(dictionary)
-	let decodedText = ''
+	let decompressed = ''
 	for (let index = 0; index < text.length; index++) {
 		// eslint-disable-next-line @typescript-eslint/naming-convention, no-underscore-dangle
 		for (let index_ = index; index_ < text.length + 1; index_++) {
 			if (text.slice(index, index_) in invertedDictionary) {
-				decodedText +=
+				decompressed +=
 					invertedDictionary[
 						text.slice(index, index_) as keyof typeof invertedDictionary
 					]
@@ -135,5 +136,5 @@ export function decode(text: string, dictionary: Dictionary): string {
 			}
 		}
 	}
-	return decodedText
+	return decompressed
 }

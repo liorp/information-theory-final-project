@@ -18,10 +18,10 @@ function naturalNumberEncoding(number_: number): string {
 	)
 }
 
-export function encode(text: string): [string, number[], Dictionary] {
+export function compress(text: string): [string, number[], Dictionary] {
 	const dictionary = [...BASE_DICTIONARY]
-	const encodedTextArray: number[] = []
-	let encodedText = ''
+	const compressedArray: number[] = []
+	let compressed = ''
 
 	let currentString = ''
 	let updatedString = ''
@@ -33,8 +33,8 @@ export function encode(text: string): [string, number[], Dictionary] {
 			currentString = updatedString
 		} else {
 			stringCode = dictionary.indexOf(currentString)
-			encodedText += naturalNumberEncoding(stringCode)
-			encodedTextArray.push(stringCode)
+			compressed += naturalNumberEncoding(stringCode)
+			compressedArray.push(stringCode)
 			if (dictionary.length < 4 * KB) {
 				dictionary.push(updatedString)
 			}
@@ -42,20 +42,20 @@ export function encode(text: string): [string, number[], Dictionary] {
 		}
 	}
 
-	return [encodedText, encodedTextArray, transformArrayToObject(dictionary)]
+	return [compressed, compressedArray, transformArrayToObject(dictionary)]
 }
 
-export function decode(encodedText: number[]): [string, Dictionary] {
+export function decompress(compressed: number[]): [string, Dictionary] {
 	const dictionary = [...BASE_DICTIONARY]
-	let decodedText = dictionary[encodedText[0]]
+	let decompressed = dictionary[compressed[0]]
 	let phrase = ''
 
-	let current = dictionary[encodedText[0]]
-	let old = dictionary[encodedText[0]]
+	let current = dictionary[compressed[0]]
+	let old = dictionary[compressed[0]]
 
-	for (const code of encodedText.slice(1)) {
+	for (const code of compressed.slice(1)) {
 		phrase = code in dictionary ? dictionary[code] : old + current
-		decodedText += phrase
+		decompressed += phrase
 		current = phrase.charAt(0)
 		if (dictionary.length < 4 * KB) {
 			dictionary.push(old + current)
@@ -63,17 +63,17 @@ export function decode(encodedText: number[]): [string, Dictionary] {
 		old = phrase
 	}
 
-	return [decodedText, transformArrayToObject(dictionary)]
+	return [decompressed, transformArrayToObject(dictionary)]
 }
 
 if (import.meta.vitest) {
 	const { it, expect } = import.meta.vitest
-	it('encode', () => {
-		expect(decode(encode('Hello World')[1])[0]).toEqual('Hello World')
-		expect(decode(encode('Hello Hello Hello')[1])[0]).toEqual(
+	it('compress', () => {
+		expect(decompress(compress('Hello World')[1])[0]).toEqual('Hello World')
+		expect(decompress(compress('Hello Hello Hello')[1])[0]).toEqual(
 			'Hello Hello Hello'
 		)
-		expect(decode(encode('fffaa')[1])[0]).toEqual('fffaa')
-		expect(decode(encode('hellofffasdf')[1])[0]).toEqual('hellofffasdf')
+		expect(decompress(compress('fffaa')[1])[0]).toEqual('fffaa')
+		expect(decompress(compress('hellofffasdf')[1])[0]).toEqual('hellofffasdf')
 	})
 }

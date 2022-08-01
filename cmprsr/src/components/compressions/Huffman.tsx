@@ -10,6 +10,7 @@ import type {
 } from 'react-d3-tree/lib/types/common'
 import type { HuffmanTreeNode, HuffmanTreeStages } from 'utils/huffman'
 import { getHuffmanTreeSize } from 'utils/huffman'
+import CompressionSummary from './CompressionSummary'
 import Dictionary from './Dictionary'
 
 export function parseHuffmanTreeTod3(
@@ -91,26 +92,20 @@ export default function Huffman({
 }: {
 	plainText: string
 }): ReactElement {
-	const { stages, frequencies, tree, dictionary, encodedText, decodedText } =
+	const { stages, frequencies, tree, dictionary, compressed, decompressed } =
 		useHuffman(plainText)
-	const size = getHuffmanTreeSize(tree)
+	const treeSize = getHuffmanTreeSize(tree)
 	return (
 		<div className='group card flex w-full max-w-lg flex-col break-all shadow-xl'>
 			<div className='card-body gap-5 overflow-y-auto'>
-				<div className='card-title'>
-					<h2>Huffman</h2>
-				</div>
-				<span>
-					<h3>Encoded Text</h3>
-					{encodedText}
-				</span>
-				<span>
-					<h3>Compression Ratio</h3>
-				</span>
-				<span>
-					<h3>Decoded Text</h3>
-					{decodedText}
-				</span>
+				<CompressionSummary
+					name='Huffman'
+					compressed={compressed}
+					compressionRatio={
+						(treeSize + compressed.length) / (decompressed.length * 8)
+					}
+					decompressed={decompressed}
+				/>
 			</div>
 			<label
 				htmlFor='huffman-visualizer-modal'
@@ -147,7 +142,7 @@ export default function Huffman({
 						/>
 					</details>
 					<details>
-						<summary>Dictionary ({size} bytes)</summary>
+						<summary>Dictionary ({treeSize} bytes)</summary>
 						<Dictionary dictionary={dictionary} />
 					</details>
 				</label>
