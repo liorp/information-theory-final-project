@@ -71,7 +71,7 @@ function HuffmanTreeStagesVisualizer({
 
 	return (
 		<>
-			<div className='btn-group m-4'>
+			<div className='btn-group m-4 mx-auto'>
 				{[...Array.from({ length: stages.length }).keys()].map(index => (
 					<button
 						key={index}
@@ -133,13 +133,14 @@ export default function Huffman({
 				className='modal cursor-pointer'
 			>
 				<label
-					className='modal-box flex h-4/5 max-h-full max-w-full flex-col overflow-y-auto'
+					className='modal-box flex h-4/5 max-h-full max-w-full flex-col gap-5 overflow-y-auto'
 					htmlFor=''
 				>
 					<h3>Tree</h3>
 					<div className='h-2/5'>
 						<HuffmanTreeVisualizer tree={tree} translate={{ x: 200, y: 10 }} />
 					</div>
+					<div className='divider' />
 					<div className='flex items-center gap-1'>
 						<h3 className='w-fit'>Stages</h3>
 						<button
@@ -159,6 +160,8 @@ export default function Huffman({
 						</button>
 					</div>
 					<HuffmanTreeStagesVisualizer stages={stages} />
+					<div className='divider' />
+
 					<details>
 						<summary>Frequencies</summary>
 						<Dictionary

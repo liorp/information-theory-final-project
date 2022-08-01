@@ -16,6 +16,7 @@ function CompressionSummary({
 			<div className='card-title'>
 				<h2>{name}</h2>
 			</div>
+			<div className='divider my-1' />
 			<span>
 				<h3>Compressed</h3>
 				{compressed}

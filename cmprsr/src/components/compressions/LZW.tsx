@@ -13,12 +13,12 @@ function LZWStagesVisualizer({
 	plainText: string
 }): ReactElement {
 	const [selectedStage, setSelectedStage] = useState(0)
-	const [currentIndex, character, updatedString, pushedToDictionary] =
+	const [currentIndex, , updatedString, pushedToDictionary] =
 		stages[selectedStage]
 
 	return (
 		<>
-			<div className='btn-group m-4'>
+			<div className='btn-group m-4 mx-auto'>
 				{[...Array.from({ length: stages.length }).keys()].map(index => (
 					<button
 						key={index}
@@ -30,7 +30,7 @@ function LZWStagesVisualizer({
 					</button>
 				))}
 			</div>
-			<div className='flex flex-col'>
+			<div className='mx-auto flex flex-col'>
 				<span className='font-mono'>
 					{[...plainText].map((char, index) => (
 						<span
@@ -86,13 +86,15 @@ export default function LZW({
 			/>
 			<label htmlFor='lzw-visualizer-modal' className='modal cursor-pointer'>
 				<label
-					className='modal-box flex h-4/5 max-h-full max-w-full flex-col overflow-y-auto'
+					className='modal-box flex h-4/5 max-h-full max-w-full flex-col gap-5 overflow-y-auto'
 					htmlFor=''
 				>
 					<h3>Compressed Bytes Array</h3>
 					{JSON.stringify(compressedArray)}
+					<div className='divider' />
 					<h3>Dictionary</h3>
 					<Dictionary dictionary={dictionary} />
+					<div className='divider' />
 					<h3>Stages</h3>
 					<LZWStagesVisualizer stages={stages} plainText={plainText} />
 				</label>
