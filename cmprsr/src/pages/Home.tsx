@@ -50,6 +50,14 @@ export default function Home(): ReactElement {
 						className='textarea grow'
 						placeholder='Enter your text here'
 						defaultValue={`${plaintext ?? ''}`}
+						onKeyDown={e => {
+							console.log(e.nativeEvent.target.parentNode.parentNode)
+							console.log(e)
+							if (e.key === 'Enter' && !e.shiftKey) {
+								e.preventDefault()
+								e.nativeEvent.target.parentNode.parentNode.requestSubmit()
+							}
+						}}
 					/>
 					<div className='divider divider-horizontal'>OR</div>
 					<input type='file' name='plainfile' />

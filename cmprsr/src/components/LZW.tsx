@@ -1,3 +1,4 @@
+/* eslint-disable unicorn/filename-case */
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable unicorn/filename-case */
 import useLZW from 'hooks/useLZW'
@@ -9,17 +10,18 @@ export default function LZW({
 }: {
 	plainText: string
 }): ReactElement {
-	const { dictionary, encodedText, decodedText } = useLZW(plainText)
+	const { dictionary, encodedText, decodedText, encodedTextArray } =
+		useLZW(plainText)
 
 	return (
-		<div className='card flex w-full max-w-lg flex-col break-all shadow-xl'>
+		<div className='group card flex w-full max-w-lg flex-col break-all shadow-xl'>
 			<div className='card-body gap-5 overflow-y-auto'>
 				<div className='card-title'>
 					<h2>LZW</h2>
 				</div>
 				<span>
 					<h3>Encoded Text</h3>
-					{JSON.stringify(encodedText)}
+					{encodedText}
 				</span>
 				<span>
 					<h3>Compression Ratio</h3>
@@ -31,7 +33,7 @@ export default function LZW({
 			</div>
 			<label
 				htmlFor='lzw-visualizer-modal'
-				className='modal-button btn rounded-t-none'
+				className='modal-button btn rounded-t-none transition-all group-hover:h-20'
 			>
 				Visualize
 			</label>
@@ -46,6 +48,8 @@ export default function LZW({
 					className='modal-box flex h-4/5 max-h-full max-w-full flex-col overflow-y-auto'
 					htmlFor=''
 				>
+					<h3>Encoded Text Array</h3>
+					{JSON.stringify(encodedTextArray)}
 					<h3>Dictionary</h3>
 					<Dictionary dictionary={dictionary} />
 				</label>

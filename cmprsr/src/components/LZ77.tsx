@@ -11,7 +11,7 @@ export default function LZ77({
 	const { encodedText, decodedText } = useLZ77(plainText)
 
 	return (
-		<div className='card flex w-full max-w-lg flex-col break-all shadow-xl'>
+		<div className='group card flex w-full max-w-lg flex-col break-all shadow-xl'>
 			<div className='card-body gap-5 overflow-y-auto whitespace-pre-wrap'>
 				<div className='card-title'>
 					<h2>LZ77</h2>
@@ -30,7 +30,7 @@ export default function LZ77({
 			</div>
 			<label
 				htmlFor='lz77-visualizer-modal'
-				className='modal-button btn rounded-t-none'
+				className='modal-button btn rounded-t-none transition-all group-hover:h-20'
 			>
 				Visualize
 			</label>

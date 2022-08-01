@@ -4,10 +4,11 @@ import type { Dictionary } from 'utils/types'
 
 export default function uzeLZW(plainText: string): {
 	dictionary: Dictionary
-	encodedText: number[]
+	encodedText: string
 	decodedText: string
+	encodedTextArray: number[]
 } {
-	const [encodedText, dictionary] = encode(plainText)
-	const [decodedText] = decode(encodedText)
-	return { dictionary, encodedText, decodedText }
+	const [encodedText, encodedTextArray, dictionary] = encode(plainText)
+	const [decodedText] = decode(encodedTextArray)
+	return { dictionary, encodedText, decodedText, encodedTextArray }
 }

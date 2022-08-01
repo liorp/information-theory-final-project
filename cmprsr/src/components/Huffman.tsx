@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable react/jsx-handler-names, react/no-array-index-key, @typescript-eslint/no-magic-numbers, react/require-default-props */
-import useHuffman from 'hooks/useHuffmanTree'
+import useHuffman from 'hooks/useHuffman'
 import type { ReactElement } from 'react'
 import { useState } from 'react'
 import Tree from 'react-d3-tree'
@@ -95,7 +95,7 @@ export default function Huffman({
 		useHuffman(plainText)
 	const size = getHuffmanTreeSize(tree)
 	return (
-		<div className='card flex w-full max-w-lg flex-col break-all shadow-xl'>
+		<div className='group card flex w-full max-w-lg flex-col break-all shadow-xl'>
 			<div className='card-body gap-5 overflow-y-auto'>
 				<div className='card-title'>
 					<h2>Huffman</h2>
@@ -114,7 +114,7 @@ export default function Huffman({
 			</div>
 			<label
 				htmlFor='huffman-visualizer-modal'
-				className='modal-button btn rounded-t-none'
+				className='modal-button btn rounded-t-none transition-all group-hover:h-20'
 			>
 				Visualize
 			</label>

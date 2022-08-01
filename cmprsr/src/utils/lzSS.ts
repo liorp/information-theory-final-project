@@ -3,18 +3,18 @@
 /* eslint-disable no-plusplus */
 
 import { DEFAULT_WINDOW_SIZE, MAX_MATCH_LENGTH, NULL_POINTER } from './consts'
-import type { LZ77Encoded } from './types'
+import type { LZSSEncoded } from './types'
 
 export function encode(
 	inputStream: string,
 	windowSize: number = DEFAULT_WINDOW_SIZE
-): LZ77Encoded {
+): LZSSEncoded {
 	// Set the coding position to the beginning of the input stream
 	let codingPosition = 0
 	let lookAheadBuffer = inputStream.slice(codingPosition)
 	let window = ''
 	let pointer = NULL_POINTER
-	const encodedText: LZ77Encoded = []
+	const encodedText: LZSSEncoded = []
 
 	while (lookAheadBuffer.length > 0) {
 		for (let matchLength = 0; matchLength <= MAX_MATCH_LENGTH; matchLength++) {
