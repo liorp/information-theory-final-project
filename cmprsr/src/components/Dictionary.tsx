@@ -13,11 +13,11 @@ export default function Dictionary({
 }): ReactElement {
 	return (
 		<div className='overflow-x-auto'>
-			<table className='table-compact table w-full'>
-				<thead>
+			<table className='table-zebra table-compact table w-full'>
+				<thead className='sticky top-0'>
 					<tr>
-						<th>{keyHeader}</th>
-						<th>{valueHeader}</th>
+						<th className='!rounded-none'>{keyHeader}</th>
+						<th className='!rounded-none'>{valueHeader}</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -30,12 +30,6 @@ export default function Dictionary({
 							</tr>
 						))}
 				</tbody>
-				<tfoot>
-					<tr>
-						<th>Symbol</th>
-						<th>Codeword</th>
-					</tr>
-				</tfoot>
 			</table>
 		</div>
 	)

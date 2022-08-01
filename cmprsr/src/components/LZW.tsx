@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable unicorn/filename-case */
 import useLZW from 'hooks/useLZW'
 import type { ReactElement } from 'react'
@@ -20,10 +21,6 @@ export default function LZW({
 					<h3>Encoded Text</h3>
 					{JSON.stringify(encodedText)}
 				</span>
-				<details>
-					<summary>Dictionary</summary>
-					<Dictionary dictionary={dictionary} />
-				</details>
 				<span>
 					<h3>Compression Ratio</h3>
 				</span>
@@ -31,10 +28,28 @@ export default function LZW({
 					<h3>Decoded Text</h3>
 					{decodedText}
 				</span>
-				<details>
-					<summary>Visualize This!</summary>
-				</details>
 			</div>
+			<label
+				htmlFor='lzw-visualizer-modal'
+				className='modal-button btn rounded-t-none'
+			>
+				Visualize
+			</label>
+
+			<input
+				type='checkbox'
+				id='lzw-visualizer-modal'
+				className='modal-toggle'
+			/>
+			<label htmlFor='lzw-visualizer-modal' className='modal cursor-pointer'>
+				<label
+					className='modal-box flex h-4/5 max-h-full max-w-full flex-col overflow-y-auto'
+					htmlFor=''
+				>
+					<h3>Dictionary</h3>
+					<Dictionary dictionary={dictionary} />
+				</label>
+			</label>
 		</div>
 	)
 }

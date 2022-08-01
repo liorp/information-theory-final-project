@@ -7,6 +7,7 @@
 import { invertObject } from 'utils/utils'
 import { PriorityQueue } from './priorityQueue'
 import type { Dictionary } from './types'
+import { BYTE } from './consts'
 
 export interface HuffmanTreeNode {
 	readonly frequency: number
@@ -85,22 +86,15 @@ export function createHuffmanDictionary(
 }
 
 export function getHuffmanTreeSize(root: HuffmanTreeNode): number {
-	size = 0;
-	treeBinaryRepresentation = [];
-	// If root is null, put 0 in
-	// structure array and return
-	if (root == undefined) {
-		treeBinaryRepresentation.push(0)
-		return
+	// Leafs are represented as 0, other nodes are represented as 1
+
+	// If root is a leaf, it takes 1 (leaf bit) + BYTE (typically 8) bits to represent it
+	if (root.left === undefined && root.right === undefined) {
+		return 1 + BYTE;
 	}
 
-	// Else place 1 in structure array,
-	// key in 'data' array and recur
-	// for left and right children
-	treeBinaryRepresentation.push(1)
-	data.push(root.key)
-	EncodeSuccinct(root.left)
-	EncodeSuccinct(root.right)
+	// Else, root is not a leaf, so it takes 1 bit to represent it
+	return 1 + getHuffmanTreeSize(root.left) + getHuffmanTreeSize(root.right);
 }
 
 // TODO: Fix this function calculation

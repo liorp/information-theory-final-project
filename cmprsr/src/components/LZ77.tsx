@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable unicorn/filename-case */
 import useLZ77 from 'hooks/useLZ77'
 import type { ReactElement } from 'react'
@@ -26,10 +27,27 @@ export default function LZ77({
 					<h3>Decoded Text</h3>
 					{decodedText}
 				</span>
-				<details>
-					<summary>Visualize This!</summary>
-				</details>
 			</div>
+			<label
+				htmlFor='lz77-visualizer-modal'
+				className='modal-button btn rounded-t-none'
+			>
+				Visualize
+			</label>
+
+			<input
+				type='checkbox'
+				id='lz77-visualizer-modal'
+				className='modal-toggle'
+			/>
+			<label htmlFor='lz77-visualizer-modal' className='modal cursor-pointer'>
+				<label
+					className='modal-box flex h-4/5 max-h-full max-w-full flex-col overflow-y-auto'
+					htmlFor=''
+				>
+					<h3>Tree</h3>
+				</label>
+			</label>
 		</div>
 	)
 }

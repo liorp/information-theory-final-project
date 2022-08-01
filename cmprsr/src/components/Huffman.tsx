@@ -43,7 +43,7 @@ function HuffmanTreeVisualizer({
 	tree: HuffmanTreeNode
 }): ReactElement {
 	return (
-		<div className='h-full w-full'>
+		<div className='border-500 h-full w-full rounded-xl border-4'>
 			<Tree
 				data={parseHuffmanTreeTod3(tree)}
 				orientation='vertical'
@@ -64,7 +64,7 @@ function HuffmanTreeStagesVisualizer({
 
 	return (
 		<>
-			<div className='btn-group'>
+			<div className='btn-group m-4'>
 				{stages.map((stage, index) => (
 					<button
 						key={index}
@@ -76,7 +76,7 @@ function HuffmanTreeStagesVisualizer({
 					</button>
 				))}
 			</div>
-			<div className='flex'>
+			<div className='flex grow gap-5'>
 				{stages[selectedStage].map((tree, index) => (
 					<HuffmanTreeVisualizer key={index} tree={tree} />
 				))}
@@ -102,18 +102,6 @@ export default function Huffman({
 					<h3>Encoded Text</h3>
 					{encodedText}
 				</span>
-				<details>
-					<summary>Frequencies</summary>
-					<Dictionary
-						dictionary={Object.fromEntries(frequencies.entries())}
-						keyHeader='Symbol'
-						valueHeader='Frequency'
-					/>
-				</details>
-				<details>
-					<summary>Dictionary</summary>
-					<Dictionary dictionary={dictionary} />
-				</details>
 				<span>
 					<h3>Compression Ratio</h3>
 				</span>
@@ -121,32 +109,47 @@ export default function Huffman({
 					<h3>Decoded Text</h3>
 					{decodedText}
 				</span>
-				<label htmlFor='huffman-visualizer-modal' className='modal-button btn'>
-					Visualize
-				</label>
-
-				<input
-					type='checkbox'
-					id='huffman-visualizer-modal'
-					className='modal-toggle'
-				/>
-				<label
-					htmlFor='huffman-visualizer-modal'
-					className='modal cursor-pointer'
-				>
-					<label
-						className='modal-box h-4/5 max-h-full max-w-full overflow-y-auto'
-						htmlFor=''
-					>
-						<h3>Tree</h3>
-						<div className='h-2/5'>
-							<HuffmanTreeVisualizer tree={tree} />
-						</div>
-						<h3>Stages</h3>
-						<HuffmanTreeStagesVisualizer stages={stages} />
-					</label>
-				</label>
 			</div>
+			<label
+				htmlFor='huffman-visualizer-modal'
+				className='modal-button btn rounded-t-none'
+			>
+				Visualize
+			</label>
+
+			<input
+				type='checkbox'
+				id='huffman-visualizer-modal'
+				className='modal-toggle'
+			/>
+			<label
+				htmlFor='huffman-visualizer-modal'
+				className='modal cursor-pointer'
+			>
+				<label
+					className='modal-box flex h-4/5 max-h-full max-w-full flex-col overflow-y-auto'
+					htmlFor=''
+				>
+					<h3>Tree</h3>
+					<div className='h-2/5'>
+						<HuffmanTreeVisualizer tree={tree} />
+					</div>
+					<h3>Stages</h3>
+					<HuffmanTreeStagesVisualizer stages={stages} />
+					<details>
+						<summary>Frequencies</summary>
+						<Dictionary
+							dictionary={Object.fromEntries(frequencies.entries())}
+							keyHeader='Symbol'
+							valueHeader='Frequency'
+						/>
+					</details>
+					<details>
+						<summary>Dictionary</summary>
+						<Dictionary dictionary={dictionary} />
+					</details>
+				</label>
+			</label>
 		</div>
 	)
 }

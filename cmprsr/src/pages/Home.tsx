@@ -19,7 +19,7 @@ export default function Home(): ReactElement {
 	return (
 		<div className='flex h-full flex-col items-center'>
 			<form
-				className='prose mx-auto mt-2 grid w-1/2 gap-1 lg:prose-xl'
+				className='prose mx-auto grid h-1/2 w-3/4 gap-2 lg:prose-xl'
 				onSubmit={async (event): Promise<void> => {
 					event.preventDefault()
 
