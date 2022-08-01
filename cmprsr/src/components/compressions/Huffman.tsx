@@ -67,6 +67,7 @@ function HuffmanTreeStagesVisualizer({
 	stages: HuffmanTreeStages
 }): ReactElement {
 	const [selectedStage, setSelectedStage] = useState(0)
+	const stage = stages[selectedStage]
 
 	return (
 		<>
@@ -83,7 +84,7 @@ function HuffmanTreeStagesVisualizer({
 				))}
 			</div>
 			<div className='flex grow gap-5'>
-				{stages[selectedStage].slice(0, 2).map(tree => (
+				{stage.slice(0, 2).map(tree => (
 					<HuffmanTreeVisualizer
 						key={getHuffmanTreeString(tree)}
 						tree={tree}

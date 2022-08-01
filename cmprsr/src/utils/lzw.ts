@@ -1,6 +1,6 @@
 import { transformArrayToObject } from 'utils/utils'
 import { BASE_DICTIONARY, KB } from './consts'
-import type { Dictionary } from './types'
+import type { Dictionary, LZWStage } from './types'
 
 function naturalNumberEncoding(number_: number): string {
 	// representing a natural number with the encoding of natural numbers discussed in class:
@@ -16,7 +16,10 @@ function naturalNumberEncoding(number_: number): string {
 	)
 }
 
-export function compress(text: string): [string, number[], Dictionary] {
+export function compress(
+	text: string
+): [string, number[], Dictionary, LZWStage[]] {
+	const stages: LZWStage[] = []
 	const dictionary = [...BASE_DICTIONARY]
 	const compressedArray: number[] = []
 	let compressed = ''
@@ -24,12 +27,15 @@ export function compress(text: string): [string, number[], Dictionary] {
 	let currentString = ''
 	let updatedString = ''
 	let stringCode = 0
+	let pushedToDictionary = false
 
-	for (const character of `${text}\0`) {
+	for (const [index, character] of [...`${text}\0`].entries()) {
 		updatedString = (currentString + character).replace('\0', '')
 		if (dictionary.includes(updatedString)) {
+			pushedToDictionary = false
 			currentString = updatedString
 		} else {
+			pushedToDictionary = true
 			stringCode = dictionary.indexOf(currentString)
 			compressed += naturalNumberEncoding(stringCode)
 			compressedArray.push(stringCode)
@@ -38,9 +44,16 @@ export function compress(text: string): [string, number[], Dictionary] {
 			}
 			currentString = character
 		}
+		if (character !== '\0')
+			stages.push([index, character, updatedString, pushedToDictionary])
 	}
 
-	return [compressed, compressedArray, transformArrayToObject(dictionary)]
+	return [
+		compressed,
+		compressedArray,
+		transformArrayToObject(dictionary),
+		stages
+	]
 }
 
 export function decompress(compressed: number[]): [string, Dictionary] {
