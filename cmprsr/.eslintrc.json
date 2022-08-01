@@ -147,7 +147,8 @@
 		"@typescript-eslint/no-misused-promises": [
 			"error",
 			{ "checksVoidReturn": false }
-		]
+		],
+		"no-control-regex": ["off"]
 	},
 	"settings": {
 		"react": {
