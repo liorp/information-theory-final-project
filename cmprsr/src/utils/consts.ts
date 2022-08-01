@@ -9,7 +9,9 @@ export const MB = 1024 * KB
 
 /** LZSS */
 export const DEFAULT_WINDOW_SIZE = 32 * KB
+/** These values are inclusive */
 export const MAX_MATCH_LENGTH = 258
+export const MIN_MATCH_LENGTH = 3
 export const NULL_POINTER: LZSSPointer = [0, 0]
 
 /** LZW */
