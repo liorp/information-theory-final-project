@@ -21,7 +21,7 @@ export default function Home(): ReactElement {
 	return (
 		<div className='flex h-full flex-col items-center'>
 			<form
-				className='prose mx-auto grid h-1/2 w-3/4 gap-2 lg:prose-xl'
+				className='prose mx-auto grid h-1/3 w-3/4 gap-2 lg:prose-xl'
 				onSubmit={async (event): Promise<void> => {
 					event.preventDefault()
 
@@ -80,7 +80,7 @@ export default function Home(): ReactElement {
 					Compress
 				</button>
 			</form>
-			<div className='carousel rounded-box w-5/6 grow'>
+			<div className='carousel my-2 w-full grow p-4'>
 				{textToCompress
 					? encodings.map(({ name, Component }) => (
 							<div

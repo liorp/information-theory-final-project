@@ -4,12 +4,13 @@ import {
 	MIN_MATCH_LENGTH,
 	NULL_POINTER
 } from './consts'
-import type { LZSSCompressed } from './types'
+import type { LZSSComponent, LZSSStage } from './types'
 
 export function compress(
 	inputStream: string,
 	windowSize: number = DEFAULT_WINDOW_SIZE
-): LZSSCompressed {
+): [LZSSComponent[], LZSSStage[]] {
+	const stages: LZSSStage[] = []
 	// Set the coding position to the MIN_MATCH_LENGTH index of the input stream
 	let codingPosition = MIN_MATCH_LENGTH
 	let lookAheadBuffer = inputStream.slice(codingPosition)
@@ -21,7 +22,7 @@ export function compress(
 	let matchIndex = 0
 
 	// We put the initial window in the compressed stream since it cannot be compressed
-	const compressed: LZSSCompressed = [...window]
+	const compressed: LZSSComponent[] = [...window]
 
 	while (lookAheadBuffer.length > MIN_MATCH_LENGTH - 1) {
 		for (
@@ -51,6 +52,7 @@ export function compress(
 				} else {
 					// If a match is not found, output the first byte in the lookahead buffer.
 					compressed.push(lookAheadBuffer[0])
+					pointer = NULL_POINTER
 					forward = 1
 				}
 
@@ -61,18 +63,30 @@ export function compress(
 					Math.max(0, codingPosition - windowSize),
 					codingPosition
 				)
+				stages.push([
+					codingPosition,
+					lookAheadBuffer[0],
+					matchString.slice(0, matchLength),
+					pointer === NULL_POINTER
+				])
 				break
 			}
+			stages.push([
+				codingPosition,
+				lookAheadBuffer[0],
+				matchString.slice(0, matchLength),
+				pointer === NULL_POINTER
+			])
 		}
 	}
 
 	// Add the final part of the input stream to the compressed stream, in case it is not compressed.
 	compressed.push(...lookAheadBuffer)
 
-	return compressed
+	return [compressed, stages]
 }
 
-export function decompress(compressed: LZSSCompressed): string {
+export function decompress(compressed: LZSSComponent[]): string {
 	let decompressed = ''
 	for (const component of compressed) {
 		if (Array.isArray(component)) {
@@ -90,18 +104,18 @@ if (import.meta.vitest) {
 	const { it, expect, describe } = import.meta.vitest
 	describe('lzss', () => {
 		it('compresses and decompresses', () => {
-			expect(decompress(compress('a'))).toEqual('a')
-			expect(decompress(compress('AABCBBABC'))).toEqual('AABCBBABC')
-			expect(decompress(compress('Hello World'))).toEqual('Hello World')
-			expect(decompress(compress('Hello Hello Hello'))).toEqual(
+			expect(decompress(compress('a')[0])).toEqual('a')
+			expect(decompress(compress('AABCBBABC')[0])).toEqual('AABCBBABC')
+			expect(decompress(compress('Hello World')[0])).toEqual('Hello World')
+			expect(decompress(compress('Hello Hello Hello')[0])).toEqual(
 				'Hello Hello Hello'
 			)
-			expect(decompress(compress('fffaa'))).toEqual('fffaa')
-			expect(decompress(compress('hellofffasdf'))).toEqual('hellofffasdf')
-			expect(decompress(compress('Hello H'))).toEqual('Hello H')
-			expect(decompress(compress('Hello He'))).toEqual('Hello He')
-			expect(decompress(compress('Hello Hel'))).toEqual('Hello Hel')
-			expect(decompress(compress('Hello Hell'))).toEqual('Hello Hell')
+			expect(decompress(compress('fffaa')[0])).toEqual('fffaa')
+			expect(decompress(compress('hellofffasdf')[0])).toEqual('hellofffasdf')
+			expect(decompress(compress('Hello H')[0])).toEqual('Hello H')
+			expect(decompress(compress('Hello He')[0])).toEqual('Hello He')
+			expect(decompress(compress('Hello Hel')[0])).toEqual('Hello Hel')
+			expect(decompress(compress('Hello Hell')[0])).toEqual('Hello Hell')
 		})
 	})
 }

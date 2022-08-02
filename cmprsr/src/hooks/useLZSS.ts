@@ -1,11 +1,12 @@
 import { compress, decompress } from 'utils/lzss'
-import type { LZSSCompressed } from 'utils/types'
+import type { LZSSComponent, LZSSStage } from 'utils/types'
 
 export default function uzeLZSS(plainText: string): {
-	compressed: LZSSCompressed
+	compressed: LZSSComponent[]
 	decompressed: string
+	stages: LZSSStage[]
 } {
-	const compressed = compress(plainText)
+	const [compressed, stages] = compress(plainText)
 	const decompressed = decompress(compressed)
-	return { compressed, decompressed }
+	return { compressed, decompressed, stages }
 }

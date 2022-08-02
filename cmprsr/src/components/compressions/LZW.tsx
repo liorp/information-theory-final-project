@@ -26,7 +26,7 @@ function LZWStagesVisualizer({
 						className={`btn ${index === selectedStage ? 'btn-active' : ''}`}
 						onClick={(): void => setSelectedStage(index)}
 					>
-						{index}
+						{index + 1}
 					</button>
 				))}
 			</div>
@@ -34,7 +34,8 @@ function LZWStagesVisualizer({
 				<span className='font-mono'>
 					{[...plainText].map((char, index) => (
 						<span
-							key={char}
+							// eslint-disable-next-line react/no-array-index-key
+							key={index}
 							className={`before:invisible before:content-['.'] after:invisible after:content-['.'] ${
 								index === currentIndex ? 'bg-red-300 font-bold' : ''
 							}`}

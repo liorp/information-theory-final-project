@@ -7,7 +7,8 @@ export interface Dictionary {
 /** LZSS */
 export type LZSSPointer = [number, number]
 export type LZSSComponent = LZSSPointer | string
-export type LZSSCompressed = LZSSComponent[]
+/** Current index, current character, current string to check, did push pointer */
+export type LZSSStage = [number, string, string, boolean]
 
 /** LZW */
 /** Current index, current character, current string to check, did push to dictionary */

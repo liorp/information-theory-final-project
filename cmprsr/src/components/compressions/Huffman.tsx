@@ -80,7 +80,7 @@ function HuffmanTreeStagesVisualizer({
 						className={`btn ${index === selectedStage ? 'btn-active' : ''}`}
 						onClick={(): void => setSelectedStage(index)}
 					>
-						{index}
+						{index + 1}
 					</button>
 				))}
 			</div>
