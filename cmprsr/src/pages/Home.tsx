@@ -52,7 +52,7 @@ export default function Home(): ReactElement {
 						CMPRSR
 					</h1>
 				</a>
-				<div className='flex min-h-[20vh] w-full'>
+				<div className='flex min-h-[20vh] w-full flex-wrap'>
 					<textarea
 						id='plaintext'
 						name='plaintext'
