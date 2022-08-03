@@ -1,9 +1,10 @@
-import useLZW from 'hooks/useLZW'
-import type { ReactElement } from 'react'
-import { useState } from 'react'
-import type { LZWStage } from 'utils/types'
-import CompressionSummary from './CompressionSummary'
-import Dictionary from './Dictionary'
+import useLZW from 'hooks/useLZW';
+import type { ReactElement } from 'react';
+import { useState } from 'react';
+import type { LZWStage } from 'utils/types';
+import { CompressionAction } from 'utils/types';
+import CompressionSummary from './CompressionSummary';
+import Dictionary from './Dictionary';
 
 function LZWStagesVisualizer({
 	stages,
@@ -60,8 +61,11 @@ export default function LZW({
 }: {
 	plainText: string
 }): ReactElement {
-	const { dictionary, compressed, decompressed, compressedArray, stages } =
-		useLZW(plainText)
+	const { dictionary, compressed, compressedArray, stages } = useLZW(
+		plainText,
+		CompressionAction.Compress
+	)
+	const { decompressed } = useLZW(plainText, CompressionAction.Decompress)
 
 	return (
 		<div className='group card flex w-full max-w-lg flex-col break-all shadow-xl'>

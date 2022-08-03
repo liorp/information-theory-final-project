@@ -12,9 +12,8 @@
 		margin-left: 0.25em;
 		content: ' ';
 		position: relative;
-		top: 2px;
 		width: 0.25em;
-		height: 0.65em;
+		height: 0.6em;
 		background: #ec7fff;
 		display: inline-block;
 		animation: cursor-blink 1.5s steps(2) infinite;
@@ -26,7 +25,7 @@ html {
 }
 
 body {
-	font-family: Poppins, -apple-system, BlinkMacSystemFont, 'Roboto', 'Segoe UI',
+	font-family: Poppins, -apple-system, BlinkMacSystemFont, Roboto, 'Segoe UI',
 		'Helvetica Neue', 'Lucida Grande', Arial, sans-serif;
 	height: 100%;
 }

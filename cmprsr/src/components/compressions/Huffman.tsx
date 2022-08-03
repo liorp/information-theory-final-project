@@ -10,6 +10,7 @@ import type {
 import { BYTE } from 'utils/consts'
 import type { HuffmanTreeNode, HuffmanTreeStages } from 'utils/huffman'
 import { getHuffmanTreeSize, getHuffmanTreeString } from 'utils/huffman'
+import { CompressionAction } from 'utils/types'
 import { symbolPrettyPrint } from 'utils/utils'
 import CompressionSummary from './CompressionSummary'
 import Dictionary from './Dictionary'
@@ -49,7 +50,7 @@ function HuffmanTreeVisualizer({
 	translate?: Point
 }): ReactElement {
 	return (
-		<div className='border-500 h-full w-full rounded-xl border-4'>
+		<div className='h-full w-full rounded-xl border-4'>
 			<Tree
 				translate={translate}
 				data={parseHuffmanTreeTod3(tree)}
@@ -102,8 +103,10 @@ export default function Huffman({
 }: {
 	plainText: string
 }): ReactElement {
-	const { stages, frequencies, tree, dictionary, compressed, decompressed } =
-		useHuffman(plainText)
+	const { stages, frequencies, tree, dictionary, compressed } =
+		useHuffman(plainText, CompressionAction.Compress)
+	const { decompressed } =
+		useHuffman(plainText, CompressionAction.Decompress)
 	const treeSize = getHuffmanTreeSize(tree)
 	return (
 		<div className='group card flex w-full max-w-lg flex-col break-all shadow-xl'>

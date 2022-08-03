@@ -17,7 +17,8 @@ function naturalNumberEncoding(number_: number): string {
 }
 
 export function compress(
-	text: string
+	text: string,
+	showStages = false
 ): [string, number[], Dictionary, LZWStage[]] {
 	const stages: LZWStage[] = []
 	const dictionary = [...BASE_DICTIONARY]
@@ -46,7 +47,7 @@ export function compress(
 			}
 			currentString = character
 		}
-		if (character !== '\0')
+		if (character !== '\0' && showStages)
 			stages.push([index, character, updatedString, pushedToDictionary])
 	}
 

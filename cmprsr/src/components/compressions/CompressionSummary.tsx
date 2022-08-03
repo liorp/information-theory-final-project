@@ -42,7 +42,14 @@ function CompressionSummary({
 				{compressionRatio}
 			</span>
 			<span>
-				<h3>Decompressed</h3>
+				<h3 className='flex items-center gap-4'>
+					Decompressed{' '}
+					<InfoButton
+						href={`data:text/plain;charset=utf-8,${decompressed}`}
+						download={`decompressed_${name.toLowerCase()}`}
+						svg='https://www.svgrepo.com/show/39042/download.svg'
+					/>
+				</h3>
 				{decompressed}
 			</span>
 		</>
