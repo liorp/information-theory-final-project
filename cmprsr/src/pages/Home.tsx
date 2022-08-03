@@ -43,7 +43,7 @@ export default function Home(): ReactElement {
 					}
 				}}
 			>
-				<a href='/' className='h-min w-1/4'>
+				<a href='/' className='h-min w-1/4 min-w-[18em]'>
 					<h1
 						className={`text-gradient ${
 							textToCompress ? '' : 'blink-cursor'
