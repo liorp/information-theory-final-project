@@ -3,8 +3,8 @@ import { BASE_DICTIONARY, KB } from './consts'
 import type { Dictionary, LZWStage } from './types'
 
 function naturalNumberEncoding(number_: number): string {
-	// representing a natural number with the encoding of natural numbers discussed in class:
-	// prefix coding for the length of the binary form of the number, then the length of the binary form of the number, then the number itself
+	// Representing a natural number with the encoding of natural numbers discussed in class:
+	// Prefix coding for the length of the binary form of the number, then the length of the binary form of the number, then the number itself
 	const numberBinRepr = number_.toString(2)
 	const numberBinReprLength = numberBinRepr.length
 	const binReprLengthBinRepr = numberBinReprLength.toString(2)
@@ -32,9 +32,11 @@ export function compress(
 	for (const [index, character] of [...`${text}\0`].entries()) {
 		updatedString = (currentString + character).replace('\0', '')
 		if (dictionary.includes(updatedString)) {
+			// If the updated string is in the dictionary, update the current string and continue
 			pushedToDictionary = false
 			currentString = updatedString
 		} else {
+			// If the updated string is not in the dictionary, push it to the dictionary and update the current string
 			pushedToDictionary = true
 			stringCode = dictionary.indexOf(currentString)
 			compressed += naturalNumberEncoding(stringCode)
@@ -46,6 +48,13 @@ export function compress(
 		}
 		if (character !== '\0')
 			stages.push([index, character, updatedString, pushedToDictionary])
+	}
+
+	// Add the last string
+	if (!pushedToDictionary) {
+		stringCode = dictionary.indexOf(currentString)
+		compressed += naturalNumberEncoding(stringCode)
+		compressedArray.push(stringCode)
 	}
 
 	return [
@@ -87,6 +96,7 @@ if (import.meta.vitest) {
 				'Hello Hello Hello'
 			)
 			expect(decompress(compress('fffaa')[1])[0]).toEqual('fffaa')
+			expect(decompress(compress('aaaaaa')[1])[0]).toEqual('aaaaaa')
 			expect(decompress(compress('hellofffasdf')[1])[0]).toEqual('hellofffasdf')
 		})
 	})

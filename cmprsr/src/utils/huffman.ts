@@ -67,7 +67,7 @@ export function createHuffmanTree(frequencies: Frequencies): HuffmanTreeNode {
 
 export function createHuffmanDictionary(
 	tree?: HuffmanTreeNode,
-	prefix = ''
+	prefix = '0'
 ): Dictionary {
 	if (!tree) return {}
 	if (tree.symbols) {
@@ -161,6 +161,7 @@ if (import.meta.vitest) {
 			)
 			expect(decompress(...compress('fffaa'))).toEqual('fffaa')
 			expect(decompress(...compress('hellofffasdf'))).toEqual('hellofffasdf')
+			expect(decompress(...compress('aaaaaaaaaaaaa'))).toEqual('aaaaaaaaaaaaa')
 		})
 	})
 }
