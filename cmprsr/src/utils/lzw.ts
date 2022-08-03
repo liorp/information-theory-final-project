@@ -91,6 +91,9 @@ if (import.meta.vitest) {
 	describe('lzw', () => {
 		it('compresses and decompresses', () => {
 			expect(decompress(compress('AABCBBABC')[1])[0]).toEqual('AABCBBABC')
+			expect(decompress(compress('AABCBBABCAABCBBABC')[1])[0]).toEqual(
+				'AABCBBABCAABCBBABC'
+			)
 			expect(decompress(compress('Hello World')[1])[0]).toEqual('Hello World')
 			expect(decompress(compress('Hello Hello Hello')[1])[0]).toEqual(
 				'Hello Hello Hello'

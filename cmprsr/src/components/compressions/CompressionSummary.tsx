@@ -27,7 +27,14 @@ function CompressionSummary({
 			</div>
 			<div className='divider my-1' />
 			<span>
-				<h3>Compressed</h3>
+				<h3 className='flex items-center gap-4'>
+					Compressed{' '}
+					<InfoButton
+						href={`data:text/plain;charset=utf-8,${compressed}`}
+						download={`compressed_${name.toLowerCase()}`}
+						svg='https://www.svgrepo.com/show/39042/download.svg'
+					/>
+				</h3>
 				{compressed}
 			</span>
 			<span>

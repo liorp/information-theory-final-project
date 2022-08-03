@@ -21,7 +21,7 @@ export default function Home(): ReactElement {
 	return (
 		<div className='flex h-full flex-col items-center'>
 			<form
-				className='prose mx-auto grid h-1/3 w-3/4 gap-2 lg:prose-xl'
+				className='prose mx-auto grid h-1/3 w-3/4 gap-2 lg:prose-lg'
 				onSubmit={async (event): Promise<void> => {
 					event.preventDefault()
 
@@ -56,7 +56,7 @@ export default function Home(): ReactElement {
 					<textarea
 						id='plaintext'
 						name='plaintext'
-						className='textarea grow'
+						className='textarea basis-[46%]'
 						placeholder='Enter your text here'
 						defaultValue={`${plaintext ?? ''}`}
 						onKeyDown={(event): void => {
@@ -74,11 +74,16 @@ export default function Home(): ReactElement {
 						}}
 					/>
 					<div className='divider divider-horizontal'>OR</div>
-					<input type='file' name='plainfile' />
+					<input type='file' name='plainfile' className='basis-5/12' />
 				</div>
-				<button className='btn' type='submit'>
-					Compress
-				</button>
+				<div className='flex w-full gap-4'>
+					<button className='btn grow' type='submit'>
+						Compress
+					</button>
+					<button className='btn grow' type='submit'>
+						Decompress
+					</button>
+				</div>
 			</form>
 			<div className='carousel my-2 w-full grow p-4'>
 				{textToCompress

@@ -4,11 +4,15 @@ function InfoButton({
 	tooltip,
 	href,
 	svg,
+	alt,
+	download,
 	direction = 'top'
 }: {
 	tooltip?: string
 	href?: string
 	svg?: string
+	alt?: string
+	download?: string
 	direction?: 'bottom' | 'left' | 'right' | 'top'
 }): ReactElement {
 	return (
@@ -20,9 +24,10 @@ function InfoButton({
 			}`}
 			data-tip={tooltip}
 			rel='noreferrer'
+			download={download}
 		>
 			{svg ? (
-				<img src={svg} alt='wikipedia logo' />
+				<img src={svg} alt={alt} />
 			) : (
 				<svg
 					xmlns='http://www.w3.org/2000/svg'

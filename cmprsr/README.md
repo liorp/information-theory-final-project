@@ -17,3 +17,5 @@ Run `pnpm dev`.
 [LZSS, DEFLATE](https://www.youtube.com/watch?v=oi2lMBBjQ8s)  
 [LZW](https://gist.github.com/revolunet/843889)  
 [LZSS, Huffman Coding](https://go-compression.github.io/)
+[SVG](https://www.svgrepo.com/)
+Thanks to twitter for the emojis!
