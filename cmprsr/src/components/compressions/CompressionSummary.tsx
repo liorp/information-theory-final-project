@@ -35,7 +35,7 @@ function CompressionSummary({
 						svg='https://www.svgrepo.com/show/39042/download.svg'
 					/>
 				</h3>
-				{compressed}
+				{compressed.length > 20 ? `${compressed.slice(0, 20)}...` : compressed}
 			</span>
 			<span>
 				<h3>Compression Ratio</h3>
@@ -50,7 +50,9 @@ function CompressionSummary({
 						svg='https://www.svgrepo.com/show/39042/download.svg'
 					/>
 				</h3>
-				{decompressed}
+				{decompressed.length > 20
+					? `${decompressed.slice(0, 20)}...`
+					: decompressed}
 			</span>
 		</>
 	)
