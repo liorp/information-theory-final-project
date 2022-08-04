@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react'
 import { useState } from 'react'
-import { compress, decompress } from 'utils/lzss'
+import { CompressionType } from 'utils/consts'
 import type { LZSSStage } from 'utils/types'
 import CompressionSummary from './CompressionSummary'
 
@@ -48,24 +48,11 @@ function LZSSStagesVisualizer({
 	)
 }
 
-export default function LZSS({
-	plainText
-}: {
-	plainText: string
-}): ReactElement {
-	const [compressed, , stages] = compress(plainText)
-	const decompressed = decompress(plainText)
-
+export default function LZSS({ input }: { input: string }): ReactElement {
 	return (
 		<div className='group card flex w-full max-w-lg flex-col break-all shadow-xl'>
 			<div className='card-body gap-5 overflow-y-auto whitespace-pre-wrap'>
-				<CompressionSummary
-					name='LZSS'
-					href='https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Storer%E2%80%93Szymanski_algorithm'
-					compressed={JSON.stringify(compressed)}
-					compressionRatio={1}
-					decompressed={decompressed}
-				/>
+				<CompressionSummary type={CompressionType.LZSS} input={input} />
 			</div>
 			<label
 				htmlFor='lzss-visualizer-modal'
@@ -89,7 +76,7 @@ export default function LZSS({
 					{stages.length > 0 ? (
 						<LZSSStagesVisualizer stages={stages} plainText={plainText} />
 					) : (
-						<span>The string was not compressed - it is too short!</span>
+						<span>The string was not compressed</span>
 					)}
 				</label>
 			</label>

@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react'
 import { useState } from 'react'
-import { compress, decompress } from 'utils/lzw'
+import { CompressionType } from 'utils/consts'
 import type { LZWStage } from 'utils/types'
 import CompressionSummary from './CompressionSummary'
 import Dictionary from './Dictionary'
@@ -55,24 +55,11 @@ function LZWStagesVisualizer({
 	)
 }
 
-export default function LZW({
-	plainText
-}: {
-	plainText: string
-}): ReactElement {
-	const [compressed, , dictionary, stages] = compress(plainText)
-	const [decompressed] = decompress(plainText)
-
+export default function LZW({ input }: { input: string }): ReactElement {
 	return (
 		<div className='group card flex w-full max-w-lg flex-col break-all shadow-xl'>
 			<div className='card-body gap-5 overflow-y-auto'>
-				<CompressionSummary
-					name='LZW'
-					href='https://en.wikipedia.org/wiki/Lempel%E2%80%93Ziv%E2%80%93Welch_compression'
-					compressed={compressed}
-					compressionRatio={1}
-					decompressed={decompressed}
-				/>
+				<CompressionSummary type={CompressionType.LZW} text={input} />
 			</div>
 			<label
 				htmlFor='lzw-visualizer-modal'

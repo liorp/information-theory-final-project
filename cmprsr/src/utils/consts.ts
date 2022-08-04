@@ -12,6 +12,8 @@ export const MIN_MATCH_LENGTH = 3
 export const COMPRESSED_FLAG = '0'
 export const UNCOMPRESSED_FLAG = '1'
 export const INT_BITS_AMOUNT = 8
+export const COMPRESSED_INDEX_ADDITION = 1 + 2 * INT_BITS_AMOUNT
+export const UNCOMPRESSED_INDEX_ADDITION = 1 + INT_BITS_AMOUNT
 
 /** LZW */
 export const MAX_DICTIONARY_SIZE = 4 * KB
@@ -25,3 +27,14 @@ export enum InputMode {
 	Text
 }
 export const MAX_TEXT_LENGTH_FOR_STAGES = 20
+
+export enum CompressionType {
+	LZSS = 'LZSS',
+	LZW = 'LZW',
+	Huffman = 'Huffman'
+}
+
+export enum CompressionAction {
+	Compress = 'Compress',
+	Decompress = 'Decompress'
+}

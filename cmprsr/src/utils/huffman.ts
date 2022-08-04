@@ -115,22 +115,25 @@ export function getHuffmanTreeSize(root?: HuffmanTreeNode): number {
 }
 
 // TODO: Check why this doesn't compress brackets
-export function compress(
-	text: string
-): [string, Dictionary, Frequencies, HuffmanTreeNode] {
+export function compress(text: string): {
+	compressed: string
+	dictionary: Dictionary
+	frequencies: Frequencies
+	tree: HuffmanTreeNode
+} {
 	const frequencies = getLetterFrequencies(text)
 	const tree = createHuffmanTree(frequencies)
 	const dictionary = createHuffmanDictionary(tree)
 
-	return [
-		text.replace(
+	return {
+		compressed: text.replace(
 			/[\d\sA-Za-z]/g,
 			letter => dictionary[letter as keyof typeof dictionary] ?? letter
 		),
 		dictionary,
 		frequencies,
 		tree
-	]
+	}
 }
 
 // TODO: Add this function

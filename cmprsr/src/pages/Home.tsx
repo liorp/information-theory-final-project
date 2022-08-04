@@ -1,14 +1,15 @@
 import Huffman from 'components/compressions/Huffman'
+import LZW from 'components/compressions/LZW'
 import Footer from 'components/layout/Footer'
 import type { ReactElement, SyntheticEvent } from 'react'
 import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { InputMode } from 'utils/consts'
+import { CompressionType, InputMode } from 'utils/consts'
 
 const encodings = [
-	{ name: 'huffman', Component: Huffman }
-	// { name: 'lzss', Component: LZSS },
-	// { name: 'lzw', Component: LZW }
+	{ type: CompressionType.Huffman, Component: Huffman },
+	// {  type: CompressionType.LZSS, Component: LZSS },
+	{ type: CompressionType.LZW, Component: LZW }
 ]
 
 export default function Home(): ReactElement {
@@ -16,7 +17,7 @@ export default function Home(): ReactElement {
 	const plaintext = searchParameters.get('plaintext')
 
 	const [inputMode, setInputMode] = useState<InputMode>(InputMode.Text)
-	const [textToCompress, setTextToCompress] = useState(plaintext ?? '')
+	const [input, setInput] = useState(plaintext ?? '')
 	const onFormSubmit = async (event: SyntheticEvent): Promise<void> => {
 		event.preventDefault()
 
@@ -27,7 +28,7 @@ export default function Home(): ReactElement {
 				if (files && files.length > 0) {
 					const file = files[0]
 					if (file.type === 'text/plain') {
-						setTextToCompress(await file.text())
+						setInput(await file.text())
 					}
 				}
 				break
@@ -40,7 +41,7 @@ export default function Home(): ReactElement {
 				setSearchParameters({
 					plaintext: nextPlaintext
 				})
-				setTextToCompress(nextPlaintext)
+				setInput(nextPlaintext)
 				break
 			}
 			default:
@@ -57,7 +58,7 @@ export default function Home(): ReactElement {
 				<a href='/' className='h-min w-1/4 min-w-[18em]'>
 					<h1
 						className={`text-gradient ${
-							textToCompress ? '' : 'blink-cursor'
+							input ? '' : 'blink-cursor'
 						} !mb-0 h-min transform bg-green-300 font-vt323`}
 					>
 						CMPRSR
@@ -115,13 +116,13 @@ export default function Home(): ReactElement {
 				</button>
 			</form>
 			<div className='carousel my-2 w-full grow p-4'>
-				{textToCompress
-					? encodings.map(({ name, Component }) => (
+				{input
+					? encodings.map(({ type, Component }) => (
 							<div
-								key={name}
+								key={type}
 								className='carousel-item prose flex-[0_0_40%] p-4 prose-headings:m-0'
 							>
-								<Component plainText={textToCompress} />
+								<Component input={input} />
 							</div>
 					  ))
 					: undefined}

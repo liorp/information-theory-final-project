@@ -37,14 +37,43 @@ function naturalNumberDecoding(string_: string): number {
 	return number
 }
 
+function decodeNatrualNumberStream(string_: string): number[] {
+	// Decoding a stream of natural numbers from the encoding of natural numbers discussed in class:
+	// Prefix coding for the length of the binary form of the number, then the length of the binary form of the number, then the number itself
+	const naturalNumbers: number[] = []
+	let currentString = string_
+	while (currentString.length > 0) {
+		// Routinely decoding a natural number
+		const firstZeroIndex = currentString.indexOf('0')
+		const binReprLengthBinReprLength = firstZeroIndex
+		const binReprLengthBinRepr = Number.parseInt(
+			currentString.slice(
+				firstZeroIndex + 1,
+				firstZeroIndex + 1 + binReprLengthBinReprLength
+			),
+			2
+		)
+		const binRepr = currentString.slice(
+			firstZeroIndex + 1 + binReprLengthBinReprLength,
+			firstZeroIndex + 1 + binReprLengthBinReprLength + binReprLengthBinRepr
+		)
+		const number = Number.parseInt(binRepr, 2)
+		naturalNumbers.push(number)
+		currentString = currentString.slice(
+			firstZeroIndex + 1 + binReprLengthBinReprLength + binReprLengthBinRepr
+		)
+	}
+
+	return naturalNumbers
+}
+
 // TODO: Check stages
 export function compress(
 	text: string,
 	showStages = false
-): [string, number[], Dictionary, LZWStage[]] {
+): { compressed: string; dictionary: Dictionary; stages: LZWStage[] } {
 	const stages: LZWStage[] = []
 	const dictionary = [...BASE_DICTIONARY]
-	const compressedArray: number[] = []
 	let compressed = ''
 
 	let currentString = ''
@@ -63,7 +92,6 @@ export function compress(
 			pushedToDictionary = true
 			stringCode = dictionary.indexOf(currentString)
 			compressed += naturalNumberEncoding(stringCode)
-			compressedArray.push(stringCode)
 			if (dictionary.length < 4 * KB) {
 				dictionary.push(updatedString)
 			}
@@ -77,59 +105,72 @@ export function compress(
 	if (!pushedToDictionary) {
 		stringCode = dictionary.indexOf(currentString)
 		compressed += naturalNumberEncoding(stringCode)
-		compressedArray.push(stringCode)
 	}
 
-	return [
-		compressed,
-		compressedArray,
-		transformArrayToObject(dictionary),
-		stages
-	]
+	return { compressed, dictionary: transformArrayToObject(dictionary), stages }
 }
 
-// TODO: Make compressed a string
-// TODO: Add stages
+// TODO: Check stages
 export function decompress(
-	compressed: number[],
+	compressed: string,
 	showStages = false
-): [string, Dictionary] {
+): { decompressed: string; dictionary: Dictionary; stages: LZWStage[] } {
+	const numbers = decodeNatrualNumberStream(compressed)
 	const stages: LZWStage[] = []
 	const dictionary = [...BASE_DICTIONARY]
-	let decompressed = dictionary[compressed[0]]
+	let decompressed = dictionary[numbers[0]]
 	let phrase = ''
 
-	let current = dictionary[compressed[0]]
-	let old = dictionary[compressed[0]]
+	let current = dictionary[numbers[0]]
+	let old = dictionary[numbers[0]]
+	let pushedToDictionary = false
 
-	for (const code of compressed.slice(1)) {
+	for (const [index, code] of numbers.slice(1).entries()) {
+		pushedToDictionary = false
 		phrase = code in dictionary ? dictionary[code] : old + current
 		decompressed += phrase
 		current = phrase.charAt(0)
 		if (dictionary.length < 4 * KB) {
+			pushedToDictionary = true
 			dictionary.push(old + current)
 		}
 		old = phrase
+		if (showStages)
+			stages.push([index, phrase, old + current, pushedToDictionary])
 	}
 
-	return [decompressed, transformArrayToObject(dictionary)]
+	return {
+		decompressed,
+		dictionary: transformArrayToObject(dictionary),
+		stages
+	}
 }
 
 if (import.meta.vitest) {
 	const { it, expect, describe } = import.meta.vitest
 	describe('lzw', () => {
 		it('compresses and decompresses', () => {
-			expect(decompress(compress('AABCBBABC')[1])[0]).toEqual('AABCBBABC')
-			expect(decompress(compress('AABCBBABCAABCBBABC')[1])[0]).toEqual(
-				'AABCBBABCAABCBBABC'
+			expect(decompress(compress('AABCBBABC').compressed).decompressed).toEqual(
+				'AABCBBABC'
 			)
-			expect(decompress(compress('Hello World')[1])[0]).toEqual('Hello World')
-			expect(decompress(compress('Hello Hello Hello')[1])[0]).toEqual(
-				'Hello Hello Hello'
+			expect(
+				decompress(compress('AABCBBABCAABCBBABC').compressed).decompressed
+			).toEqual('AABCBBABCAABCBBABC')
+			expect(
+				decompress(compress('Hello World').compressed).decompressed
+			).toEqual('Hello World')
+			expect(
+				decompress(compress('Hello Hello Hello').compressed).decompressed
+			).toEqual('Hello Hello Hello')
+			expect(decompress(compress('fffaa').compressed).decompressed).toEqual(
+				'fffaa'
 			)
-			expect(decompress(compress('fffaa')[1])[0]).toEqual('fffaa')
-			expect(decompress(compress('aaaaaa')[1])[0]).toEqual('aaaaaa')
-			expect(decompress(compress('hellofffasdf')[1])[0]).toEqual('hellofffasdf')
+			expect(decompress(compress('aaaaaa').compressed).decompressed).toEqual(
+				'aaaaaa'
+			)
+			expect(
+				decompress(compress('hellofffasdf').compressed).decompressed
+			).toEqual('hellofffasdf')
 		})
 		it('encodes and decodes natural number', () => {
 			expect(naturalNumberDecoding(naturalNumberEncoding(0))).toEqual(0)

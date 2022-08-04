@@ -6,12 +6,11 @@ import type {
 	RawNodeDatum,
 	TreeLinkDatum
 } from 'react-d3-tree/lib/types/common'
-import { BYTE } from 'utils/consts'
+import { CompressionAction, CompressionType } from 'utils/consts'
 import type { HuffmanTreeNode, HuffmanTreeStages } from 'utils/huffman'
 import {
 	compress,
 	createHuffmanTreeStages,
-	decompress,
 	getHuffmanTreeSize,
 	getHuffmanTreeString
 } from 'utils/huffman'
@@ -96,13 +95,9 @@ function HuffmanTreeStagesVisualizer({
 	)
 }
 
-export default function Huffman({
-	plainText
-}: {
-	plainText: string
-}): ReactElement {
-	const [compressed, dictionary, frequencies, tree] = compress(plainText)
-	const decompressed = decompress(plainText)
+export default function Huffman({ input }: { input: string }): ReactElement {
+	const [operation, setOperation] = useState(CompressionAction.Compress))
+	const { dictionary, frequencies, tree } = compress(input)
 	const treeSize = getHuffmanTreeSize(tree)
 	const stages = createHuffmanTreeStages(frequencies)
 
@@ -110,67 +105,71 @@ export default function Huffman({
 		<div className='group card flex w-full max-w-lg flex-col break-all shadow-xl'>
 			<div className='card-body gap-5 overflow-y-auto'>
 				<CompressionSummary
-					name='Huffman'
-					href='https://en.wikipedia.org/wiki/Huffman_coding'
-					compressed={compressed}
-					compressionRatio={
-						(treeSize + compressed.length) / (plainText.length * BYTE)
-					}
-					decompressed={decompressed}
+					type={CompressionType.Huffman}
+					input={input}
+					operation={operation}
+					setOperation={setOperation}
 				/>
 			</div>
-			<label
-				htmlFor='huffman-visualizer-modal'
-				className='modal-button btn rounded-t-none transition-all group-hover:h-20'
-			>
-				Visualize
-			</label>
+			{operation === CompressionAction.Compress && (
+				<>
+					<label
+						htmlFor='huffman-visualizer-modal'
+						className='modal-button btn rounded-t-none transition-all group-hover:h-20'
+					>
+						Visualize
+					</label>
 
-			<input
-				type='checkbox'
-				id='huffman-visualizer-modal'
-				className='modal-toggle'
-			/>
-			<label
-				htmlFor='huffman-visualizer-modal'
-				className='modal cursor-pointer'
-			>
-				<label
-					className='modal-box flex h-4/5 max-h-full max-w-full flex-col gap-5 overflow-y-auto'
-					htmlFor=''
-				>
-					<h3>Tree</h3>
-					<div className='h-3/5'>
-						<HuffmanTreeVisualizer tree={tree} translate={{ x: 200, y: 10 }} />
-					</div>
-					<div className='divider' />
-					<div className='flex items-center gap-1'>
-						<h3 className='w-fit'>Stages</h3>
-						<button
-							type='button'
-							className='not-prose btn tooltip tooltip-right btn-circle btn-xs'
-							data-tip='Stages are the different steps of the Huffman coding compression algorithm. This shows the next two trees that are about to be merged'
+					<input
+						type='checkbox'
+						id='huffman-visualizer-modal'
+						className='modal-toggle'
+					/>
+					<label
+						htmlFor='huffman-visualizer-modal'
+						className='modal cursor-pointer'
+					>
+						<label
+							className='modal-box flex h-4/5 max-h-full max-w-full flex-col gap-5 overflow-y-auto'
+							htmlFor=''
 						>
-							{InfoSVG}
-						</button>
-					</div>
-					<HuffmanTreeStagesVisualizer stages={stages} />
-					<div className='divider' />
+							<h3>Tree</h3>
+							<div className='h-3/5'>
+								<HuffmanTreeVisualizer
+									tree={tree}
+									translate={{ x: 200, y: 10 }}
+								/>
+							</div>
+							<div className='divider' />
+							<div className='flex items-center gap-1'>
+								<h3 className='w-fit'>Stages</h3>
+								<button
+									type='button'
+									className='not-prose btn tooltip tooltip-right btn-circle btn-xs'
+									data-tip='Stages are the different steps of the Huffman coding compression algorithm. This shows the next two trees that are about to be merged'
+								>
+									{InfoSVG}
+								</button>
+							</div>
+							<HuffmanTreeStagesVisualizer stages={stages} />
+							<div className='divider' />
 
-					<details>
-						<summary>Frequencies</summary>
-						<Dictionary
-							dictionary={Object.fromEntries(frequencies.entries())}
-							keyHeader='Symbol'
-							valueHeader='Frequency'
-						/>
-					</details>
-					<details>
-						<summary>Dictionary ({treeSize} bytes)</summary>
-						<Dictionary dictionary={dictionary} />
-					</details>
-				</label>
-			</label>
+							<details>
+								<summary>Frequencies</summary>
+								<Dictionary
+									dictionary={Object.fromEntries(frequencies.entries())}
+									keyHeader='Symbol'
+									valueHeader='Frequency'
+								/>
+							</details>
+							<details>
+								<summary>Dictionary ({treeSize} bytes)</summary>
+								<Dictionary dictionary={dictionary} />
+							</details>
+						</label>
+					</label>
+				</>
+			)}
 		</div>
 	)
 }

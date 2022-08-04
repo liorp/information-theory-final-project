@@ -11,8 +11,3 @@ export type LZSSStage = [number, string, string, boolean]
 /** LZW */
 /** Current index, current character, current string to check, did push to dictionary */
 export type LZWStage = [number, string, string, boolean]
-
-export enum CompressionAction {
-	Compress,
-	Decompress
-}

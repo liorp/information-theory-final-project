@@ -1,14 +1,16 @@
 import {
 	COMPRESSED_FLAG,
+	COMPRESSED_INDEX_ADDITION,
 	DEFAULT_WINDOW_SIZE,
 	INT_BITS_AMOUNT,
 	MAX_MATCH_LENGTH,
 	MIN_MATCH_LENGTH,
-	UNCOMPRESSED_FLAG
+	UNCOMPRESSED_FLAG,
+	UNCOMPRESSED_INDEX_ADDITION
 } from './consts'
 import type { LZSSStage } from './types'
 
-function getBinaryForm(
+function getNumberBinaryForm(
 	number_: number,
 	zerosNumber: number = INT_BITS_AMOUNT
 ): string {
@@ -20,7 +22,7 @@ function getBinaryForm(
 export function compress(
 	inputStream: string,
 	windowSize: number = DEFAULT_WINDOW_SIZE
-): [string, string[], LZSSStage[]] {
+): { compressed: string; stages: LZSSStage[] } {
 	const stages: LZSSStage[] = []
 	const initialWindowStart = Math.max(0, MIN_MATCH_LENGTH - windowSize)
 
@@ -38,9 +40,11 @@ export function compress(
 	let matchOffset = 0
 	let matchString = ''
 
-	// First MIN_MATCH_LENGTH cannot be compressed and put as is in compressed outcome
-	let compressed = inputStream.slice(0, MIN_MATCH_LENGTH)
-	const compressedArray = [...compressed]
+	// First MIN_MATCH_LENGTH cannot be compressed and put as is in compressed outcome (with the UNCOMPRESSED FLAG)
+	let compressed = [...inputStream.slice(0, MIN_MATCH_LENGTH)]
+		.map(char => UNCOMPRESSED_FLAG + getNumberBinaryForm(char.charCodeAt(0)))
+		.join('')
+	let outputAddition = ''
 
 	while (lookAheadBuffer.length >= MIN_MATCH_LENGTH) {
 		currentCharacter = lookAheadBuffer.charAt(0)
@@ -74,9 +78,8 @@ export function compress(
 		// If no match is found in the window, append to output the UNCOMPRESSED flag and the character in current position
 		if (!matchFound) {
 			matchLength = 1
-			compressed +=
-				UNCOMPRESSED_FLAG + getBinaryForm(currentCharacter.charCodeAt(0))
-			compressedArray.push(UNCOMPRESSED_FLAG, currentCharacter)
+			outputAddition =
+				UNCOMPRESSED_FLAG + getNumberBinaryForm(currentCharacter.charCodeAt(0))
 		}
 		// If a match is found in the window, append to output the COMPRESSED flag and the match's offset and length relative to the end of the windowes
 		else {
@@ -84,16 +87,10 @@ export function compress(
 			matchString = lookAheadBuffer.slice(0, matchLength)
 			matchOffset = windowSize - window.lastIndexOf(matchString)
 
-			compressed +=
+			outputAddition =
 				COMPRESSED_FLAG +
-				getBinaryForm(matchOffset) +
-				getBinaryForm(matchLength)
-
-			compressedArray.push(
-				COMPRESSED_FLAG,
-				matchOffset.toString(),
-				matchLength.toString()
-			)
+				getNumberBinaryForm(matchOffset) +
+				getNumberBinaryForm(matchLength)
 		}
 
 		// Increase the coding position (and the window) and decrease lookaheadbuffer according to the length of the match
@@ -101,58 +98,99 @@ export function compress(
 		effectiveWindowSize = Math.max(0, codingPosition - windowSize)
 		window = inputStream.slice(effectiveWindowSize, codingPosition)
 		lookAheadBuffer = inputStream.slice(codingPosition)
+
+		// Update compression output
+		compressed += outputAddition
 	}
 
 	// Add the final part of the input stream to the compressed stream, in case it is not compressed.
 	compressed += lookAheadBuffer
-	compressedArray.push(...lookAheadBuffer)
 
-	return [compressed, compressedArray, stages]
+	return { compressed, stages }
 }
 
 // TODO: Get rid of compressed array
 // TODO: Add stages
-export function decompress(
-	compressed: string,
-): string {
+export function decompress(compressed: string): string {
 	let decompressed = ''
+	let compressionFlag = ''
 	let index = 0
-	let flag = ''
+	let indexAddition = 0
+
+	let matchOffsetStart = 0
+	let matchOffsetEnd = 0
+	let matchLengthStart = 0
+	let matchLengthEnd = 0
+	let charStart = 0
+	let charEnd = 0
+
+	let charInBinary = ''
+	let match = ''
+	let matchStart = 0
+	let matchEnd = 0
 	let matchLength = 0
 	let matchOffset = 0
 
+	// Iterate compressed input and parse it
 	while (index < compressed.length) {
 		// Obtain the flag which indicates if the following bits are a comperssion outcome or the original uncompressed bits
-		flag = compressed.charAt(index)
+		compressionFlag = compressed.charAt(index)
 
 		// If data after flag is compressed, extract offset and length of repeated data and append it to output
-		if (flag === COMPRESSED_FLAG) {
-			matchOffset = Number.parseInt(
-				compressed.slice(index + 1, index + INT_BITS_AMOUNT - 1),
-				2
-			)
-			matchLength = Number.parseInt(
-				compressed.slice(
-					index + 1 + INT_BITS_AMOUNT,
-					index + 2 * INT_BITS_AMOUNT
-				),
-				2
-			)
-			index += 2 * INT_BITS_AMOUNT + 1 // check this...
+		if (compressionFlag === COMPRESSED_FLAG) {
+			// Obtain the first and last indices of the match's offset
+			matchOffsetStart = index + 1
+			matchOffsetEnd = matchOffsetStart + INT_BITS_AMOUNT
 
-			output += dictionary.substr(dictionary.length - offset, matchLength)
-			dictionary =
-				dictionary.slice(matchLength) +
-				decompressed.substr(output.length - matchLength, matchLength)
+			// Obtain the first and last indices of the match's length		
+			matchLengthStart = index + 1 + INT_BITS_AMOUNT
+			matchLengthEnd = matchLengthStart + INT_BITS_AMOUNT
+
+			// Extract match's offset
+			matchOffset = Number.parseInt(
+				compressed.slice(matchOffsetStart, matchOffsetEnd),
+				2
+			)
+
+			// Extract match's length
+			matchLength = Number.parseInt(
+				compressed.slice(matchLengthStart, matchLengthEnd),
+				2
+			)
+
+			// Find appropriate match in previous bits
+			matchStart = index - matchOffset * INT_BITS_AMOUNT
+			matchEnd = matchStart + matchLength
+			match = compressed.slice(matchStart, matchEnd)
+
+			// Calculate addition to index
+			indexAddition = COMPRESSED_INDEX_ADDITION
 		}
+
 		// If data after flag is uncompressed, extract character and append it to output
 		else {
-			decompressed += compress.charAt(codingPosition + 1)
-			dictionary = dictionary.slice(1) + decompressed.slice(-1)
-			codingPosition += 2
+			// Obtain the first and last indices of the character
+			charStart = index + 1
+			charEnd = charStart + INT_BITS_AMOUNT
+
+			// Extract character
+			charInBinary = compressed.slice(charStart, charEnd)
+			match = String.fromCharCode(
+				Number.parseInt(
+					charInBinary,
+					2
+				)
+			)
+
+			// Calculate addition to index
+			indexAddition = UNCOMPRESSED_INDEX_ADDITION
 		}
 
-		index++
+		// Increase index by appropriate amount
+		index += indexAddition
+
+		// Update output with the found match
+		decompressed += match
 	}
 
 	return decompressed
@@ -162,18 +200,24 @@ if (import.meta.vitest) {
 	const { it, expect, describe } = import.meta.vitest
 	describe('lzss', () => {
 		it('compresses and decompresses', () => {
-			expect(decompress(compress('a')[0])).toEqual('a')
-			expect(decompress(compress('AABCBBABC')[0])).toEqual('AABCBBABC')
-			expect(decompress(compress('Hello World')[0])).toEqual('Hello World')
-			expect(decompress(compress('Hello Hello Hello')[0])).toEqual(
+			expect(decompress(compress('a').compressed)).toEqual('a')
+			expect(decompress(compress('AABCBBABC').compressed)).toEqual('AABCBBABC')
+			expect(decompress(compress('Hello World').compressed)).toEqual(
+				'Hello World'
+			)
+			expect(decompress(compress('Hello Hello Hello').compressed)).toEqual(
 				'Hello Hello Hello'
 			)
-			expect(decompress(compress('fffaa')[0])).toEqual('fffaa')
-			expect(decompress(compress('hellofffasdf')[0])).toEqual('hellofffasdf')
-			expect(decompress(compress('Hello H')[0])).toEqual('Hello H')
-			expect(decompress(compress('Hello He')[0])).toEqual('Hello He')
-			expect(decompress(compress('Hello Hel')[0])).toEqual('Hello Hel')
-			expect(decompress(compress('Hello Hell')[0])).toEqual('Hello Hell')
+			expect(decompress(compress('fffaa').compressed)).toEqual('fffaa')
+			expect(decompress(compress('hellofffasdf').compressed)).toEqual(
+				'hellofffasdf'
+			)
+			expect(decompress(compress('Hello H').compressed)).toEqual('Hello H')
+			expect(decompress(compress('Hello He').compressed)).toEqual('Hello He')
+			expect(decompress(compress('Hello Hel').compressed)).toEqual('Hello Hel')
+			expect(decompress(compress('Hello Hell').compressed)).toEqual(
+				'Hello Hell'
+			)
 		})
 	})
 }
