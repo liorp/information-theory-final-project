@@ -16,6 +16,27 @@ function naturalNumberEncoding(number_: number): string {
 	)
 }
 
+function naturalNumberDecoding(string_: string): number {
+	// Decoding a natural number from the encoding of natural numbers discussed in class:
+	// Prefix coding for the length of the binary form of the number, then the length of the binary form of the number, then the number itself
+	const firstZeroIndex = string_.indexOf('0')
+	const binReprLengthBinReprLength = firstZeroIndex
+	const binReprLengthBinRepr = Number.parseInt(
+		string_.slice(
+			firstZeroIndex + 1,
+			firstZeroIndex + 1 + binReprLengthBinReprLength
+		),
+		2
+	)
+	const binRepr = string_.slice(
+		firstZeroIndex + 1 + binReprLengthBinReprLength,
+		firstZeroIndex + 1 + binReprLengthBinReprLength + binReprLengthBinRepr
+	)
+	const number = Number.parseInt(binRepr, 2)
+
+	return number
+}
+
 // TODO: Check stages
 export function compress(
 	text: string,
@@ -69,7 +90,11 @@ export function compress(
 
 // TODO: Make compressed a string
 // TODO: Add stages
-export function decompress(compressed: number[]): [string, Dictionary] {
+export function decompress(
+	compressed: number[],
+	showStages = false
+): [string, Dictionary] {
+	const stages: LZWStage[] = []
 	const dictionary = [...BASE_DICTIONARY]
 	let decompressed = dictionary[compressed[0]]
 	let phrase = ''
@@ -105,6 +130,13 @@ if (import.meta.vitest) {
 			expect(decompress(compress('fffaa')[1])[0]).toEqual('fffaa')
 			expect(decompress(compress('aaaaaa')[1])[0]).toEqual('aaaaaa')
 			expect(decompress(compress('hellofffasdf')[1])[0]).toEqual('hellofffasdf')
+		})
+		it('encodes and decodes natural number', () => {
+			expect(naturalNumberDecoding(naturalNumberEncoding(0))).toEqual(0)
+			expect(naturalNumberDecoding(naturalNumberEncoding(1))).toEqual(1)
+			expect(naturalNumberDecoding(naturalNumberEncoding(6))).toEqual(6)
+			expect(naturalNumberDecoding(naturalNumberEncoding(125))).toEqual(125)
+			expect(naturalNumberDecoding(naturalNumberEncoding(256))).toEqual(256)
 		})
 	})
 }
