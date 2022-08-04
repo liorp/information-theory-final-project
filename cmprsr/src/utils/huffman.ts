@@ -114,6 +114,7 @@ export function getHuffmanTreeSize(root?: HuffmanTreeNode): number {
 	return 1 + getHuffmanTreeSize(root.left) + getHuffmanTreeSize(root.right)
 }
 
+// TODO: Check why this doesn't compress brackets
 export function compress(
 	text: string
 ): [string, Dictionary, Frequencies, HuffmanTreeNode] {
@@ -132,7 +133,7 @@ export function compress(
 	]
 }
 
-// TODO: Add this funciton
+// TODO: Add this function
 function buildDictionaryFromInput(input: string): Dictionary {
 	const dictionary: Dictionary = {}
 	return dictionary
