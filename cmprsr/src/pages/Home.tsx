@@ -1,6 +1,4 @@
 import Huffman from 'components/compressions/Huffman'
-import LZSS from 'components/compressions/LZSS'
-import LZW from 'components/compressions/LZW'
 import Footer from 'components/layout/Footer'
 import type { ReactElement, SyntheticEvent } from 'react'
 import { useState } from 'react'
@@ -8,9 +6,9 @@ import { useSearchParams } from 'react-router-dom'
 import { InputMode } from 'utils/consts'
 
 const encodings = [
-	{ name: 'huffman', Component: Huffman },
-	{ name: 'lzss', Component: LZSS },
-	{ name: 'lzw', Component: LZW }
+	{ name: 'huffman', Component: Huffman }
+	// { name: 'lzss', Component: LZSS },
+	// { name: 'lzw', Component: LZW }
 ]
 
 export default function Home(): ReactElement {

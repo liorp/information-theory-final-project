@@ -18,3 +18,6 @@ export const range = (start: number, stop: number, step = 1): number[] =>
 
 export const symbolPrettyPrint = (symbol: string): string =>
 	`${symbol} (${[...symbol].map(s => s.codePointAt(0) ?? '').join(', ')})`
+
+// eslint-disable-next-line unicorn/prevent-abbreviations
+export const mod = (n: number, m: number): number => ((n % m) + m) % m

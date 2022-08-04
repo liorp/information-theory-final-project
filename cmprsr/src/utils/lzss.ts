@@ -114,7 +114,6 @@ export function compress(
 // TODO: Add stages
 export function decompress(
 	compressed: string,
-	compressedArray: string[]
 ): string {
 	let decompressed = ''
 	let index = 0
@@ -123,7 +122,9 @@ export function decompress(
 	let matchOffset = 0
 
 	while (index < compressed.length) {
+		// Obtain the flag which indicates if the following bits are a comperssion outcome or the original uncompressed bits
 		flag = compressed.charAt(index)
+
 		// If data after flag is compressed, extract offset and length of repeated data and append it to output
 		if (flag === COMPRESSED_FLAG) {
 			matchOffset = Number.parseInt(

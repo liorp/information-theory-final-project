@@ -18,7 +18,8 @@ import {
 import { symbolPrettyPrint } from 'utils/utils'
 import CompressionSummary from './CompressionSummary'
 import Dictionary from './Dictionary'
-import InfoButton from './InfoButton'
+import { InfoSVG } from './Link'
+import StagePlayer from './StagePlayer'
 
 export function parseHuffmanTreeTod3(
 	tree: HuffmanTreeNode,
@@ -77,18 +78,11 @@ function HuffmanTreeStagesVisualizer({
 
 	return (
 		<>
-			<div className='btn-group m-4 mx-auto'>
-				{[...Array.from({ length: stages.length }).keys()].map(index => (
-					<button
-						key={index}
-						type='button'
-						className={`btn ${index === selectedStage ? 'btn-active' : ''}`}
-						onClick={(): void => setSelectedStage(index)}
-					>
-						{index + 1}
-					</button>
-				))}
-			</div>
+			<StagePlayer
+				stageCount={stages.length}
+				selectedStage={selectedStage}
+				setSelectedStage={setSelectedStage}
+			/>
 			<div className='flex grow gap-5'>
 				{stage.slice(0, 2).map(tree => (
 					<HuffmanTreeVisualizer
@@ -146,16 +140,19 @@ export default function Huffman({
 					htmlFor=''
 				>
 					<h3>Tree</h3>
-					<div className='h-2/5'>
+					<div className='h-3/5'>
 						<HuffmanTreeVisualizer tree={tree} translate={{ x: 200, y: 10 }} />
 					</div>
 					<div className='divider' />
 					<div className='flex items-center gap-1'>
 						<h3 className='w-fit'>Stages</h3>
-						<InfoButton
-							tooltip='Stages are the different steps of the Huffman coding compression algorithm. This shows the next two trees that are about to be merged'
-							direction='right'
-						/>
+						<button
+							type='button'
+							className='not-prose btn tooltip tooltip-right btn-circle btn-xs'
+							data-tip='Stages are the different steps of the Huffman coding compression algorithm. This shows the next two trees that are about to be merged'
+						>
+							{InfoSVG}
+						</button>
 					</div>
 					<HuffmanTreeStagesVisualizer stages={stages} />
 					<div className='divider' />

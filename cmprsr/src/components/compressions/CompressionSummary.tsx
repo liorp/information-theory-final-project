@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react'
-import InfoButton from './InfoButton'
+import Link from './Link'
 
 function CompressionSummary({
 	name,
@@ -19,7 +19,7 @@ function CompressionSummary({
 			<div className='card-title justify-between'>
 				<h2>{name}</h2>
 				<div className='card-actions'>
-					<InfoButton
+					<Link
 						href={href}
 						svg='https://upload.wikimedia.org/wikipedia/en/8/80/Wikipedia-logo-v2.svg'
 					/>
@@ -29,7 +29,7 @@ function CompressionSummary({
 			<span>
 				<h3 className='flex items-center gap-4'>
 					Compressed{' '}
-					<InfoButton
+					<Link
 						href={`data:text/plain;charset=utf-8,${compressed}`}
 						download={`compressed_${name.toLowerCase()}`}
 						svg='https://www.svgrepo.com/show/39042/download.svg'
@@ -44,7 +44,7 @@ function CompressionSummary({
 			<span>
 				<h3 className='flex items-center gap-4'>
 					Decompressed{' '}
-					<InfoButton
+					<Link
 						href={`data:text/plain;charset=utf-8,${decompressed}`}
 						download={`decompressed_${name.toLowerCase()}`}
 						svg='https://www.svgrepo.com/show/39042/download.svg'
