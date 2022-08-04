@@ -16,6 +16,7 @@ function naturalNumberEncoding(number_: number): string {
 	)
 }
 
+// TODO: Check stages
 export function compress(
 	text: string,
 	showStages = false
@@ -66,6 +67,8 @@ export function compress(
 	]
 }
 
+// TODO: Make compressed a string
+// TODO: Add stages
 export function decompress(compressed: number[]): [string, Dictionary] {
 	const dictionary = [...BASE_DICTIONARY]
 	let decompressed = dictionary[compressed[0]]

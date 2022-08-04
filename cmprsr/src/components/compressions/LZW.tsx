@@ -1,6 +1,6 @@
-import { useLZWDecompress, uzeLZWCompress } from 'hooks/useLZW'
 import type { ReactElement } from 'react'
 import { useState } from 'react'
+import { compress, decompress } from 'utils/lzw'
 import type { LZWStage } from 'utils/types'
 import CompressionSummary from './CompressionSummary'
 import Dictionary from './Dictionary'
@@ -60,8 +60,8 @@ export default function LZW({
 }: {
 	plainText: string
 }): ReactElement {
-	const { dictionary, compressed, stages } = uzeLZWCompress(plainText)
-	const { decompressed } = useLZWDecompress(plainText)
+	const [compressed, , dictionary, stages] = compress(plainText)
+	const [decompressed] = decompress(plainText)
 
 	return (
 		<div className='group card flex w-full max-w-lg flex-col break-all shadow-xl'>

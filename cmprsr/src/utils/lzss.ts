@@ -16,8 +16,7 @@ function getBinaryForm(
 	return '0'.repeat(zerosNumber - binaryString.length) + binaryString
 }
 
-// TODO: Finish stages and compression decompression
-
+// TODO: Check stages
 export function compress(
 	inputStream: string,
 	windowSize: number = DEFAULT_WINDOW_SIZE
@@ -111,6 +110,8 @@ export function compress(
 	return [compressed, compressedArray, stages]
 }
 
+// TODO: Get rid of compressed array
+// TODO: Add stages
 export function decompress(
 	compressed: string,
 	compressedArray: string[]

@@ -1,4 +1,3 @@
-import { useHuffmanCompress, useHuffmanDecompress } from 'hooks/useHuffman'
 import type { ReactElement } from 'react'
 import { useState } from 'react'
 import Tree from 'react-d3-tree'
@@ -9,7 +8,13 @@ import type {
 } from 'react-d3-tree/lib/types/common'
 import { BYTE } from 'utils/consts'
 import type { HuffmanTreeNode, HuffmanTreeStages } from 'utils/huffman'
-import { getHuffmanTreeSize, getHuffmanTreeString } from 'utils/huffman'
+import {
+	compress,
+	createHuffmanTreeStages,
+	decompress,
+	getHuffmanTreeSize,
+	getHuffmanTreeString
+} from 'utils/huffman'
 import { symbolPrettyPrint } from 'utils/utils'
 import CompressionSummary from './CompressionSummary'
 import Dictionary from './Dictionary'
@@ -102,10 +107,10 @@ export default function Huffman({
 }: {
 	plainText: string
 }): ReactElement {
-	const { stages, frequencies, tree, dictionary, compressed } =
-		useHuffmanCompress(plainText)
-	const { decompressed } = useHuffmanDecompress(plainText)
+	const [compressed, dictionary, frequencies, tree] = compress(plainText)
+	const decompressed = decompress(plainText)
 	const treeSize = getHuffmanTreeSize(tree)
+	const stages = createHuffmanTreeStages(frequencies)
 
 	return (
 		<div className='group card flex w-full max-w-lg flex-col break-all shadow-xl'>
