@@ -31,7 +31,7 @@ export function createHuffmanTreeStages(
 	for (const [symbols, frequency] of frequencies) {
 		queue.queue({ symbols, frequency })
 	}
-	stages.push(structuredClone(queue.strategy.data) as HuffmanTreeNode[])
+	stages.push(structuredClone(queue.strategy.data))
 
 	while (queue.length > 1) {
 		const left = queue.dequeue()
@@ -41,7 +41,7 @@ export function createHuffmanTreeStages(
 			left,
 			right
 		})
-		stages.push(structuredClone(queue.strategy.data) as HuffmanTreeNode[])
+		stages.push(structuredClone(queue.strategy.data))
 	}
 	return stages
 }
@@ -132,8 +132,16 @@ export function compress(
 	]
 }
 
-export function decompress(text: string, dictionary: Dictionary): string {
-	const invertedDictionary = invertObject(dictionary)
+// TODO: Add this funciton
+function buildDictionaryFromInput(input: string): Dictionary {
+	const dictionary: Dictionary = {}
+	return dictionary
+}
+
+export function decompress(text: string, dictionary?: Dictionary): string {
+	const invertedDictionary = invertObject(
+		dictionary ?? buildDictionaryFromInput(text)
+	)
 	let decompressed = ''
 	for (let index = 0; index < text.length; index++) {
 		for (let innerIndex = index; innerIndex < text.length + 1; innerIndex++) {

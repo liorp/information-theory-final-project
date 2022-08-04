@@ -1,8 +1,7 @@
-import useLZSS from 'hooks/useLZSS'
+import { useLZSSDecompress, uzeLZSSCompress } from 'hooks/useLZSS'
 import type { ReactElement } from 'react'
 import { useState } from 'react'
 import type { LZSSStage } from 'utils/types'
-import { CompressionAction } from 'utils/types'
 import CompressionSummary from './CompressionSummary'
 
 function LZSSStagesVisualizer({
@@ -54,8 +53,8 @@ export default function LZSS({
 }: {
 	plainText: string
 }): ReactElement {
-	const { compressed, stages } = useLZSS(plainText, CompressionAction.Compress)
-	const { decompressed } = useLZSS(plainText, CompressionAction.Decompress)
+	const { compressed, stages } = uzeLZSSCompress(plainText)
+	const { decompressed } = useLZSSDecompress(plainText)
 
 	return (
 		<div className='group card flex w-full max-w-lg flex-col break-all shadow-xl'>

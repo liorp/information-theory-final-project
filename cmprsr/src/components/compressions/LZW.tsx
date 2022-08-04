@@ -1,10 +1,9 @@
-import useLZW from 'hooks/useLZW';
-import type { ReactElement } from 'react';
-import { useState } from 'react';
-import type { LZWStage } from 'utils/types';
-import { CompressionAction } from 'utils/types';
-import CompressionSummary from './CompressionSummary';
-import Dictionary from './Dictionary';
+import { useLZWDecompress, uzeLZWCompress } from 'hooks/useLZW'
+import type { ReactElement } from 'react'
+import { useState } from 'react'
+import type { LZWStage } from 'utils/types'
+import CompressionSummary from './CompressionSummary'
+import Dictionary from './Dictionary'
 
 function LZWStagesVisualizer({
 	stages,
@@ -61,11 +60,8 @@ export default function LZW({
 }: {
 	plainText: string
 }): ReactElement {
-	const { dictionary, compressed, compressedArray, stages } = useLZW(
-		plainText,
-		CompressionAction.Compress
-	)
-	const { decompressed } = useLZW(plainText, CompressionAction.Decompress)
+	const { dictionary, compressed, stages } = uzeLZWCompress(plainText)
+	const { decompressed } = useLZWDecompress(plainText)
 
 	return (
 		<div className='group card flex w-full max-w-lg flex-col break-all shadow-xl'>
@@ -95,9 +91,6 @@ export default function LZW({
 					className='modal-box flex h-4/5 max-h-full max-w-full flex-col gap-5 overflow-y-auto'
 					htmlFor=''
 				>
-					<h3>Compressed Bytes Array</h3>
-					{JSON.stringify(compressedArray)}
-					<div className='divider' />
 					<h3>Dictionary</h3>
 					<Dictionary dictionary={dictionary} />
 					<div className='divider' />
