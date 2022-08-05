@@ -16,7 +16,7 @@ import {
 } from 'utils/huffman'
 import { symbolPrettyPrint } from 'utils/utils'
 import { InfoSVG } from '../controls/Link'
-import StagePlayer from '../controls/StagePlayer'
+import StagePlayer from '../controls/StageController'
 import CompressionSummary from './visualizer/CompressionSummary'
 import Dictionary from './visualizer/Dictionary'
 

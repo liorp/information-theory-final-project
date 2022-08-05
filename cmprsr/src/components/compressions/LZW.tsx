@@ -1,4 +1,4 @@
-import StagePlayer from 'components/controls/StagePlayer'
+import StagePlayer from 'components/controls/StageController'
 import type { ReactElement } from 'react'
 import { useState } from 'react'
 import {
@@ -29,7 +29,7 @@ function LZWStagesVisualizer({
 				selectedStage={selectedStage}
 				setSelectedStage={setSelectedStage}
 			/>
-			<div className='mx-auto flex flex-col'>
+			<div className='flex w-full flex-col items-center'>
 				<span className='font-mono'>
 					{[...input].map((char, index) => (
 						<span

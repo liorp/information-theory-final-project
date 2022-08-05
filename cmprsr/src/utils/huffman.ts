@@ -68,15 +68,15 @@ export function createHuffmanTree(frequencies: Frequencies): HuffmanTreeNode {
 
 export function createHuffmanDictionary(
 	tree?: HuffmanTreeNode,
-	prefix = '0'
+	prefix?: string
 ): Dictionary {
 	if (!tree) return {}
 	if (tree.symbols) {
-		return { [tree.symbols]: prefix }
+		return { [tree.symbols]: prefix ?? '0' }
 	}
 	return {
-		...createHuffmanDictionary(tree.left, `${prefix}0`),
-		...createHuffmanDictionary(tree.right, `${prefix}1`)
+		...createHuffmanDictionary(tree.left, `${prefix ?? ''}0`),
+		...createHuffmanDictionary(tree.right, `${prefix ?? ''}1`)
 	}
 }
 
@@ -87,7 +87,7 @@ export function getHuffmanTreeString(root?: HuffmanTreeNode): string {
 		return '0'
 	}
 
-	// If root is a leaf, it takes 1 (leaf bit) + BYTE (typically 8) bits to represent it
+	// If root is a leaf, it takes 1 (leaf bit) + BYTE bits to represent it
 	if (root.left === undefined && root.right === undefined) {
 		return `0${root.symbols ?? ''}`
 	}

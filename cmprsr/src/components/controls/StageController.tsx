@@ -12,7 +12,7 @@ function StageController({
 	selectedStage: number
 	setSelectedStage: Dispatch<SetStateAction<number>>
 }): ReactElement {
-	const [delay, setDelay] = useState(1000)
+	const [delay, setDelay] = useState(1500)
 	const [isRunning, toggleIsRunning] = useBoolean(true)
 
 	useInterval(
@@ -24,13 +24,13 @@ function StageController({
 	)
 	return (
 		<div className='flex items-center gap-4'>
-			<select className='select select-bordered max-w-xs' value={selectedStage}>
+			<select
+				className='select select-bordered select-sm max-w-xs py-0'
+				value={selectedStage}
+				onChange={(event): void => setSelectedStage(Number(event.target.value))}
+			>
 				{[...Array.from({ length: stageCount }).keys()].map(index => (
-					<option
-						key={index}
-						onClick={(): void => setSelectedStage(index)}
-						defaultValue={index}
-					>
+					<option key={index} value={index}>
 						{index + 1}
 					</option>
 				))}
@@ -41,29 +41,29 @@ function StageController({
 				onClick={(): void =>
 					setSelectedStage(stage => mod(stage - 1, stageCount))
 				}
-				className='btn btn-outline btn-active'
+				className='btn btn-outline btn-active btn-sm'
 			>
 				<img
 					src='https://www.svgrepo.com/show/56613/back.svg'
-					className='!m-0 h-6 w-6'
+					className='!m-0 h-3 w-3 '
 					alt='Previous'
 				/>
 			</button>
 			<button
 				type='button'
 				onClick={(): void => toggleIsRunning()}
-				className='btn btn-outline'
+				className='btn btn-outline btn-sm'
 			>
 				{isRunning ? (
 					<img
 						src='https://www.svgrepo.com/show/79225/pause.svg'
-						className='!m-0 h-6 w-6'
+						className='!m-0 h-3 w-3'
 						alt='Pause'
 					/>
 				) : (
 					<img
 						src='https://www.svgrepo.com/show/175619/play.svg'
-						className='!m-0 h-6 w-6'
+						className='!m-0 h-3 w-3'
 						alt='Play'
 					/>
 				)}
@@ -73,11 +73,11 @@ function StageController({
 				onClick={(): void =>
 					setSelectedStage(stage => mod(stage + 1, stageCount))
 				}
-				className='btn btn-outline'
+				className='btn btn-outline btn-sm'
 			>
 				<img
 					src='https://www.svgrepo.com/show/45445/next.svg'
-					className='!m-0 h-6 w-6'
+					className='!m-0 h-3 w-3'
 					alt='Next'
 				/>
 			</button>
