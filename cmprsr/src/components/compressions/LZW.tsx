@@ -1,16 +1,17 @@
 import type { ReactElement } from 'react'
 import { useState } from 'react'
-import { CompressionType } from 'utils/consts'
+import { CompressionOperation, CompressionType } from 'utils/consts'
+import { compress, decompress } from 'utils/lzw'
 import type { LZWStage } from 'utils/types'
-import CompressionSummary from './CompressionSummary'
-import Dictionary from './Dictionary'
+import CompressionSummary from './visualizer/CompressionSummary'
+import Dictionary from './visualizer/Dictionary'
 
 function LZWStagesVisualizer({
 	stages,
-	plainText
+	input
 }: {
 	stages: LZWStage[]
-	plainText: string
+	input: string
 }): ReactElement {
 	const [selectedStage, setSelectedStage] = useState(0)
 	const [currentIndex, , updatedString, pushedToDictionary] =
@@ -32,7 +33,7 @@ function LZWStagesVisualizer({
 			</div>
 			<div className='mx-auto flex flex-col'>
 				<span className='font-mono'>
-					{[...plainText].map((char, index) => (
+					{[...input].map((char, index) => (
 						<span
 							// eslint-disable-next-line react/no-array-index-key
 							key={index}
@@ -55,12 +56,20 @@ function LZWStagesVisualizer({
 	)
 }
 
-export default function LZW({ input }: { input: string }): ReactElement {
+function Visualizer({
+	input,
+	operation
+}: {
+	input: string
+	operation: CompressionOperation
+}): ReactElement {
+	const { dictionary, stages } =
+		operation === CompressionOperation.Compress
+			? compress(input)
+			: decompress(input)
+
 	return (
-		<div className='group card flex w-full max-w-lg flex-col break-all shadow-xl'>
-			<div className='card-body gap-5 overflow-y-auto'>
-				<CompressionSummary type={CompressionType.LZW} text={input} />
-			</div>
+		<>
 			<label
 				htmlFor='lzw-visualizer-modal'
 				className='modal-button btn rounded-t-none transition-all group-hover:h-20'
@@ -82,9 +91,27 @@ export default function LZW({ input }: { input: string }): ReactElement {
 					<Dictionary dictionary={dictionary} />
 					<div className='divider' />
 					<h3>Stages</h3>
-					<LZWStagesVisualizer stages={stages} plainText={plainText} />
+					<LZWStagesVisualizer stages={stages} input={input} />
 				</label>
 			</label>
+		</>
+	)
+}
+
+export default function LZW({ input }: { input: string }): ReactElement {
+	const [operation, setOperation] = useState(CompressionOperation.Compress)
+
+	return (
+		<div className='group card flex w-full max-w-lg flex-col break-all shadow-xl'>
+			<div className='card-body gap-5 overflow-y-auto'>
+				<CompressionSummary
+					type={CompressionType.LZW}
+					input={input}
+					operation={operation}
+					setOperation={setOperation}
+				/>
+			</div>
+			<Visualizer input={input} operation={operation} />
 		</div>
 	)
 }

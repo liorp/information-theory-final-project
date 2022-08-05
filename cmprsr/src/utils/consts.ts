@@ -34,7 +34,7 @@ export enum CompressionType {
 	Huffman = 'Huffman'
 }
 
-export enum CompressionAction {
+export enum CompressionOperation {
 	Compress = 'Compress',
 	Decompress = 'Decompress'
 }

@@ -5,7 +5,7 @@ export interface Dictionary {
 }
 
 /** LZSS */
-/** Current index, current character, current string to check from lookAheadBuffer */
+/** Current index, current character, current string to check from lookAheadBuffer, did convert to pointer */
 export type LZSSStage = [number, string, string, boolean]
 
 /** LZW */

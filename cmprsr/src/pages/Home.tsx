@@ -6,11 +6,11 @@ import { useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { CompressionType, InputMode } from 'utils/consts'
 
-const encodings = [
-	{ type: CompressionType.Huffman, Component: Huffman },
-	// {  type: CompressionType.LZSS, Component: LZSS },
-	{ type: CompressionType.LZW, Component: LZW }
-]
+const compressionToComponent = {
+	[CompressionType.Huffman]: Huffman,
+	[CompressionType.LZW]: LZW
+	// [CompressionType.LZSS]: <LZSS />
+}
 
 export default function Home(): ReactElement {
 	const [searchParameters, setSearchParameters] = useSearchParams()
@@ -117,7 +117,7 @@ export default function Home(): ReactElement {
 			</form>
 			<div className='carousel my-2 w-full grow p-4'>
 				{input
-					? encodings.map(({ type, Component }) => (
+					? Object.entries(compressionToComponent).map(([type, Component]) => (
 							<div
 								key={type}
 								className='carousel-item prose flex-[0_0_40%] p-4 prose-headings:m-0'

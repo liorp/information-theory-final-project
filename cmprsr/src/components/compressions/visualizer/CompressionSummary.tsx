@@ -1,5 +1,5 @@
 import type { Dispatch, ReactElement, SetStateAction } from 'react'
-import { CompressionAction, CompressionType } from 'utils/consts'
+import { CompressionOperation, CompressionType } from 'utils/consts'
 import {
 	compress as compressHuffman,
 	decompress as decompressHuffman
@@ -9,7 +9,7 @@ import {
 	decompress as decompressLZSS
 } from 'utils/lzss'
 import { compress as compressLZW, decompress as decompressLZW } from 'utils/lzw'
-import Link from './Link'
+import Link from '../../controls/Link'
 
 const useCompression = (
 	compressionType: CompressionType
@@ -130,8 +130,8 @@ function CompressionSummary({
 }: {
 	type: CompressionType
 	input: string
-	operation: CompressionAction
-	setOperation: Dispatch<SetStateAction<CompressionAction>>
+	operation: CompressionOperation
+	setOperation: Dispatch<SetStateAction<CompressionOperation>>
 }): ReactElement {
 	const { compress, decompress } = useCompression(type)
 
@@ -151,26 +151,26 @@ function CompressionSummary({
 				<button
 					type='button'
 					className={`btn ${
-						operation === CompressionAction.Compress ? 'btn-active' : ''
+						operation === CompressionOperation.Compress ? 'btn-active' : ''
 					}`}
-					onClick={(): void => setOperation(CompressionAction.Compress)}
+					onClick={(): void => setOperation(CompressionOperation.Compress)}
 				>
 					Compress
 				</button>
 				<button
 					type='button'
 					className={`btn ${
-						operation === CompressionAction.Decompress ? 'btn-active' : ''
+						operation === CompressionOperation.Decompress ? 'btn-active' : ''
 					}`}
-					onClick={(): void => setOperation(CompressionAction.Decompress)}
+					onClick={(): void => setOperation(CompressionOperation.Decompress)}
 				>
 					Decompress
 				</button>
 			</div>
-			{operation === CompressionAction.Compress && (
+			{operation === CompressionOperation.Compress && (
 				<Compressed type={type} input={input} compress={compress} />
 			)}
-			{operation === CompressionAction.Decompress && (
+			{operation === CompressionOperation.Decompress && (
 				<Decompressed type={type} input={input} decompress={decompress} />
 			)}
 		</>

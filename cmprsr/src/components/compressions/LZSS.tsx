@@ -1,15 +1,16 @@
 import type { ReactElement } from 'react'
 import { useState } from 'react'
-import { CompressionType } from 'utils/consts'
+import { CompressionOperation, CompressionType } from 'utils/consts'
+import { compress, decompress } from 'utils/lzss'
 import type { LZSSStage } from 'utils/types'
-import CompressionSummary from './CompressionSummary'
+import CompressionSummary from './visualizer/CompressionSummary'
 
 function LZSSStagesVisualizer({
 	stages,
-	plainText
+	input
 }: {
 	stages: LZSSStage[]
-	plainText: string
+	input: string
 }): ReactElement {
 	const [selectedStage, setSelectedStage] = useState(0)
 	const [currentIndex, , updatedString, pushedPointer] = stages[selectedStage]
@@ -30,7 +31,7 @@ function LZSSStagesVisualizer({
 			</div>
 			<div className='mx-auto flex flex-col'>
 				<span className='font-mono'>
-					{[...plainText].map((char, index) => (
+					{[...input].map((char, index) => (
 						<span
 							key={char}
 							className={`before:invisible before:content-['.'] after:invisible after:content-['.'] ${
@@ -48,12 +49,20 @@ function LZSSStagesVisualizer({
 	)
 }
 
-export default function LZSS({ input }: { input: string }): ReactElement {
+function Visualizer({
+	input,
+	operation
+}: {
+	input: string
+	operation: CompressionOperation
+}): ReactElement {
+	const { stages } =
+		operation === CompressionOperation.Compress
+			? compress(input)
+			: decompress(input)
+
 	return (
-		<div className='group card flex w-full max-w-lg flex-col break-all shadow-xl'>
-			<div className='card-body gap-5 overflow-y-auto whitespace-pre-wrap'>
-				<CompressionSummary type={CompressionType.LZSS} input={input} />
-			</div>
+		<>
 			<label
 				htmlFor='lzss-visualizer-modal'
 				className='modal-button btn rounded-t-none transition-all group-hover:h-20'
@@ -73,13 +82,27 @@ export default function LZSS({ input }: { input: string }): ReactElement {
 				>
 					<div className='divider' />
 					<h3>Stages</h3>
-					{stages.length > 0 ? (
-						<LZSSStagesVisualizer stages={stages} plainText={plainText} />
-					) : (
-						<span>The string was not compressed</span>
-					)}
+					<LZSSStagesVisualizer stages={stages} input={input} />
 				</label>
 			</label>
+		</>
+	)
+}
+
+export default function LZSS({ input }: { input: string }): ReactElement {
+	const [operation, setOperation] = useState(CompressionOperation.Compress)
+
+	return (
+		<div className='group card flex w-full max-w-lg flex-col break-all shadow-xl'>
+			<div className='card-body gap-5 overflow-y-auto whitespace-pre-wrap'>
+				<CompressionSummary
+					type={CompressionType.LZSS}
+					input={input}
+					operation={operation}
+					setOperation={setOperation}
+				/>
+			</div>
+			<Visualizer input={input} operation={operation} />
 		</div>
 	)
 }
