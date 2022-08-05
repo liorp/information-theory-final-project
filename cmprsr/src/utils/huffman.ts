@@ -162,6 +162,7 @@ export function decompress(text: string, dictionary?: Dictionary): string {
 	return decompressed
 }
 
+// TODO: Add tests for special chars e.g. parentheses
 if (import.meta.vitest) {
 	const { it, expect, describe } = import.meta.vitest
 	describe('huffman', () => {
