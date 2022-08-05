@@ -24,12 +24,12 @@ function StageController({
 	)
 	return (
 		<div className='flex items-center gap-4'>
-			<select className='select select select-bordered max-w-xs'>
+			<select className='select select-bordered max-w-xs' value={selectedStage}>
 				{[...Array.from({ length: stageCount }).keys()].map(index => (
 					<option
 						key={index}
 						onClick={(): void => setSelectedStage(index)}
-						selected={index === selectedStage}
+						defaultValue={index}
 					>
 						{index + 1}
 					</option>

@@ -1,6 +1,11 @@
+import StagePlayer from 'components/controls/StagePlayer'
 import type { ReactElement } from 'react'
 import { useState } from 'react'
-import { CompressionOperation, CompressionType } from 'utils/consts'
+import {
+	CompressionOperation,
+	CompressionType,
+	MAX_TEXT_LENGTH_FOR_STAGES
+} from 'utils/consts'
 import { compress, decompress } from 'utils/lzw'
 import type { LZWStage } from 'utils/types'
 import CompressionSummary from './visualizer/CompressionSummary'
@@ -19,18 +24,11 @@ function LZWStagesVisualizer({
 
 	return (
 		<>
-			<div className='btn-group m-4 mx-auto'>
-				{[...Array.from({ length: stages.length }).keys()].map(index => (
-					<button
-						key={index}
-						type='button'
-						className={`btn ${index === selectedStage ? 'btn-active' : ''}`}
-						onClick={(): void => setSelectedStage(index)}
-					>
-						{index + 1}
-					</button>
-				))}
-			</div>
+			<StagePlayer
+				stageCount={stages.length}
+				selectedStage={selectedStage}
+				setSelectedStage={setSelectedStage}
+			/>
 			<div className='mx-auto flex flex-col'>
 				<span className='font-mono'>
 					{[...input].map((char, index) => (
@@ -65,8 +63,8 @@ function Visualizer({
 }): ReactElement {
 	const { dictionary, stages } =
 		operation === CompressionOperation.Compress
-			? compress(input)
-			: decompress(input)
+			? compress(input, input.length < MAX_TEXT_LENGTH_FOR_STAGES)
+			: decompress(input, input.length < MAX_TEXT_LENGTH_FOR_STAGES)
 
 	return (
 		<>
@@ -91,7 +89,11 @@ function Visualizer({
 					<Dictionary dictionary={dictionary} />
 					<div className='divider' />
 					<h3>Stages</h3>
-					<LZWStagesVisualizer stages={stages} input={input} />
+					{stages.length > 0 ? (
+						<LZWStagesVisualizer stages={stages} input={input} />
+					) : (
+						<span>Visualization not available</span>
+					)}
 				</label>
 			</label>
 		</>

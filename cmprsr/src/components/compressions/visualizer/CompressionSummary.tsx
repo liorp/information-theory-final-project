@@ -1,5 +1,5 @@
 import type { Dispatch, ReactElement, SetStateAction } from 'react'
-import { CompressionOperation, CompressionType } from 'utils/consts'
+import { BYTE, CompressionOperation, CompressionType } from 'utils/consts'
 import {
 	compress as compressHuffman,
 	decompress as decompressHuffman
@@ -38,8 +38,11 @@ const useCompression = (
 	}
 }
 
-const compressionRatio = (compressed: string, decompressed: string): string => {
-	const ratio = compressed.length / decompressed.length
+const compressionRatio = (
+	compressedLength: number,
+	decompressedLength: number
+): string => {
+	const ratio = compressedLength / decompressedLength
 	return `${ratio.toFixed(2)}x`
 }
 
@@ -82,7 +85,7 @@ function Compressed({
 			</span>
 			<span>
 				<h3>Compression Ratio</h3>
-				{compressionRatio(compressed, input)}
+				{compressionRatio(compressed.length, input.length * BYTE)}
 			</span>
 		</>
 	)
@@ -116,7 +119,7 @@ function Decompressed({
 			</span>
 			<span>
 				<h3>Compression Ratio</h3>
-				{compressionRatio(input, decompressed)}
+				{compressionRatio(input.length, decompressed.length * BYTE)}
 			</span>
 		</>
 	)
