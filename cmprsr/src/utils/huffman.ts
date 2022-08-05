@@ -1,6 +1,7 @@
 import { invertObject } from 'utils/utils'
 import { BYTE } from './consts'
 import { PriorityQueue } from './priorityQueue'
+import { stringsToCheck } from './testUtils'
 import type { Dictionary } from './types'
 
 export interface HuffmanTreeNode {
@@ -114,7 +115,6 @@ export function getHuffmanTreeSize(root?: HuffmanTreeNode): number {
 	return 1 + getHuffmanTreeSize(root.left) + getHuffmanTreeSize(root.right)
 }
 
-// TODO: Check why this doesn't compress brackets
 export function compress(text: string): {
 	compressed: string
 	dictionary: Dictionary
@@ -126,17 +126,16 @@ export function compress(text: string): {
 	const dictionary = createHuffmanDictionary(tree)
 
 	return {
-		compressed: text.replace(
-			/[\d\sA-Za-z]/g,
-			letter => dictionary[letter as keyof typeof dictionary] ?? letter
-		),
+		compressed: [...text]
+			.map(letter => dictionary[letter as keyof typeof dictionary] ?? letter)
+			.join(''),
 		dictionary,
 		frequencies,
 		tree
 	}
 }
 
-// TODO: Add this function
+// TODO: Add this function - for the decompression to work without dictionary (from binary only)
 function buildDictionaryFromInput(input: string): Dictionary {
 	const dictionary: Dictionary = {}
 	return dictionary
@@ -162,25 +161,14 @@ export function decompress(text: string, dictionary?: Dictionary): string {
 	return decompressed
 }
 
-// TODO: Add tests for special chars e.g. parentheses
 if (import.meta.vitest) {
 	const { it, expect, describe } = import.meta.vitest
 	describe('huffman', () => {
 		it('compresses and decompresses', () => {
-			expect(decompress(compress('AABCBBABC').compressed)).toEqual('AABCBBABC')
-			expect(decompress(compress('Hello World').compressed)).toEqual(
-				'Hello World'
-			)
-			expect(decompress(compress('Hello Hello Hello').compressed)).toEqual(
-				'Hello Hello Hello'
-			)
-			expect(decompress(compress('fffaa').compressed)).toEqual('fffaa')
-			expect(decompress(compress('hellofffasdf').compressed)).toEqual(
-				'hellofffasdf'
-			)
-			expect(decompress(compress('aaaaaaaaaaaaa').compressed)).toEqual(
-				'aaaaaaaaaaaaa'
-			)
+			for (const string of stringsToCheck) {
+				const { compressed, dictionary } = compress(string)
+				expect(decompress(compressed, dictionary)).toBe(string)
+			}
 		})
 	})
 }

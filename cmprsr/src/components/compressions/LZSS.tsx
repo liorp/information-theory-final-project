@@ -1,7 +1,7 @@
-import type { ReactElement } from 'react'
+import type { ReactElement, ReactNode } from 'react'
 import { useState } from 'react'
 import { CompressionOperation, CompressionType } from 'utils/consts'
-import { compress, decompress } from 'utils/lzss'
+import { compress } from 'utils/lzss'
 import type { LZSSStage } from 'utils/types'
 import CompressionSummary from './visualizer/CompressionSummary'
 
@@ -49,17 +49,10 @@ function LZSSStagesVisualizer({
 	)
 }
 
-function Visualizer({
-	input,
-	operation
-}: {
-	input: string
-	operation: CompressionOperation
-}): ReactElement {
-	const { stages } =
-		operation === CompressionOperation.Compress
-			? compress(input)
-			: decompress(input)
+function Visualizer({ input }: { input: string }): ReactNode {
+	const { stages } = compress(input)
+
+	if (stages.length === 0) return undefined
 
 	return (
 		<>
@@ -80,7 +73,6 @@ function Visualizer({
 					className='modal-box flex h-4/5 max-h-full max-w-full flex-col overflow-y-auto'
 					htmlFor=''
 				>
-					<div className='divider' />
 					<h3>Stages</h3>
 					<LZSSStagesVisualizer stages={stages} input={input} />
 				</label>
@@ -93,7 +85,7 @@ export default function LZSS({ input }: { input: string }): ReactElement {
 	const [operation, setOperation] = useState(CompressionOperation.Compress)
 
 	return (
-		<div className='group card flex w-full max-w-lg flex-col break-all shadow-xl'>
+		<div className='group card flex w-full max-w-lg flex-col break-all border-2 border-neutral shadow-xl'>
 			<div className='card-body gap-5 overflow-y-auto whitespace-pre-wrap'>
 				<CompressionSummary
 					type={CompressionType.LZSS}
@@ -102,7 +94,9 @@ export default function LZSS({ input }: { input: string }): ReactElement {
 					setOperation={setOperation}
 				/>
 			</div>
-			<Visualizer input={input} operation={operation} />
+			{operation === CompressionOperation.Compress && (
+				<Visualizer input={input} />
+			)}
 		</div>
 	)
 }

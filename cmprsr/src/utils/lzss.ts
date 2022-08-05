@@ -9,6 +9,7 @@ import {
 	UNCOMPRESSED_FLAG,
 	UNCOMPRESSED_INDEX_ADDITION
 } from './consts'
+import { stringsToCheck } from './testUtils'
 import type { LZSSStage } from './types'
 
 function getNumberBinaryForm(
@@ -185,7 +186,6 @@ export function compress(
 	return { compressed, stages }
 }
 
-// TODO: Add stages
 export function decompress(compressed: string): string {
 	let decompressed = ''
 	let compressionFlag = ''
@@ -284,24 +284,11 @@ if (import.meta.vitest) {
 			])
 		})
 		it('compresses and decompresses', () => {
-			expect(decompress(compress('a').compressed)).toEqual('a')
-			expect(decompress(compress('AABCBBABC').compressed)).toEqual('AABCBBABC')
-			expect(decompress(compress('Hello World').compressed)).toEqual(
-				'Hello World'
-			)
-			expect(decompress(compress('Hello Hello Hello').compressed)).toEqual(
-				'Hello Hello Hello'
-			)
-			expect(decompress(compress('fffaa').compressed)).toEqual('fffaa')
-			expect(decompress(compress('hellofffasdf').compressed)).toEqual(
-				'hellofffasdf'
-			)
-			expect(decompress(compress('Hello H').compressed)).toEqual('Hello H')
-			expect(decompress(compress('Hello He').compressed)).toEqual('Hello He')
-			expect(decompress(compress('Hello Hel').compressed)).toEqual('Hello Hel')
-			expect(decompress(compress('Hello Hell').compressed)).toEqual(
-				'Hello Hell'
-			)
+			for (const string of stringsToCheck) {
+				const { compressed } = compress(string)
+				const decompressed = decompress(compressed)
+				expect(decompressed).toEqual(string)
+			}
 		})
 	})
 }

@@ -1,5 +1,6 @@
 import { transformArrayToObject } from 'utils/utils'
 import { BASE_DICTIONARY, KB } from './consts'
+import { stringsToCheck } from './testUtils'
 import type { Dictionary, LZWStage } from './types'
 
 function naturalNumberEncoding(number_: number): string {
@@ -150,27 +151,11 @@ if (import.meta.vitest) {
 	const { it, expect, describe } = import.meta.vitest
 	describe('lzw', () => {
 		it('compresses and decompresses', () => {
-			expect(decompress(compress('AABCBBABC').compressed).decompressed).toEqual(
-				'AABCBBABC'
-			)
-			expect(
-				decompress(compress('AABCBBABCAABCBBABC').compressed).decompressed
-			).toEqual('AABCBBABCAABCBBABC')
-			expect(
-				decompress(compress('Hello World').compressed).decompressed
-			).toEqual('Hello World')
-			expect(
-				decompress(compress('Hello Hello Hello').compressed).decompressed
-			).toEqual('Hello Hello Hello')
-			expect(decompress(compress('fffaa').compressed).decompressed).toEqual(
-				'fffaa'
-			)
-			expect(decompress(compress('aaaaaa').compressed).decompressed).toEqual(
-				'aaaaaa'
-			)
-			expect(
-				decompress(compress('hellofffasdf').compressed).decompressed
-			).toEqual('hellofffasdf')
+			for (const string of stringsToCheck) {
+				const { compressed } = compress(string)
+				const { decompressed } = decompress(compressed)
+				expect(decompressed).toEqual(string)
+			}
 		})
 		it('encodes and decodes natural number', () => {
 			expect(naturalNumberDecoding(naturalNumberEncoding(0))).toEqual(0)

@@ -1,4 +1,5 @@
 import Huffman from 'components/compressions/Huffman'
+import LZSS from 'components/compressions/LZSS'
 import LZW from 'components/compressions/LZW'
 import Footer from 'components/layout/Footer'
 import type { ReactElement, SyntheticEvent } from 'react'
@@ -8,8 +9,8 @@ import { CompressionType, InputMode } from 'utils/consts'
 
 const compressionToComponent = {
 	[CompressionType.Huffman]: Huffman,
-	[CompressionType.LZW]: LZW
-	// [CompressionType.LZSS]: <LZSS />
+	[CompressionType.LZW]: LZW,
+	[CompressionType.LZSS]: LZSS
 }
 
 export default function Home(): ReactElement {
@@ -116,16 +117,15 @@ export default function Home(): ReactElement {
 				</button>
 			</form>
 			<div className='carousel my-2 w-full grow p-4'>
-				{input
-					? Object.entries(compressionToComponent).map(([type, Component]) => (
-							<div
-								key={type}
-								className='carousel-item prose flex-[0_0_40%] p-4 prose-headings:m-0'
-							>
-								<Component input={input} />
-							</div>
-					  ))
-					: undefined}
+				{!!input &&
+					Object.entries(compressionToComponent).map(([type, Component]) => (
+						<div
+							key={type}
+							className='carousel-item prose flex-[0_0_40%] p-4 prose-headings:m-0'
+						>
+							<Component input={input} />
+						</div>
+					))}
 			</div>
 			<Footer />
 		</div>

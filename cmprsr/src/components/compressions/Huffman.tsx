@@ -161,7 +161,7 @@ function Visualizer({ input }: { input: string }): ReactElement {
 export default function Huffman({ input }: { input: string }): ReactElement {
 	const [operation, setOperation] = useState(CompressionOperation.Compress)
 	return (
-		<div className='group card flex w-full max-w-lg flex-col break-all shadow-xl'>
+		<div className='group card flex w-full max-w-lg flex-col break-all border-2 border-neutral shadow-xl'>
 			<div className='card-body gap-5 overflow-y-auto'>
 				<CompressionSummary
 					type={CompressionType.Huffman}
