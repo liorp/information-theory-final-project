@@ -41,9 +41,9 @@ const useCompression = (
 const compressionRatio = (
 	compressedLength: number,
 	decompressedLength: number
-): string => {
-	const ratio = compressedLength / decompressedLength
-	return `${ratio.toFixed(2)}x`
+): number => {
+	const ratio = decompressedLength / compressedLength
+	return ratio
 }
 
 const compressionTypeToHref = (type: CompressionType): string => {
@@ -57,6 +57,16 @@ const compressionTypeToHref = (type: CompressionType): string => {
 		default:
 			throw new Error(`Unsupported compression type`)
 	}
+}
+
+function CompressionRatio({ ratio }: { ratio: number }): ReactElement {
+	const hue = ratio > 1 ? 120 - 120 / ratio : 0
+	return (
+		<span>
+			<h3>Compression Ratio</h3>
+			<span style={{ color: `hsl(${hue},50%, 50%)` }}>{ratio.toFixed(2)}x</span>
+		</span>
+	)
 }
 
 function Compressed({
@@ -83,10 +93,9 @@ function Compressed({
 				</h3>
 				{compressed.length > 20 ? `${compressed.slice(0, 20)}...` : compressed}
 			</span>
-			<span>
-				<h3>Compression Ratio</h3>
-				{compressionRatio(compressed.length, input.length * BYTE)}
-			</span>
+			<CompressionRatio
+				ratio={compressionRatio(compressed.length, input.length * BYTE)}
+			/>
 		</>
 	)
 }
@@ -117,10 +126,9 @@ function Decompressed({
 					? `${decompressed.slice(0, 20)}...`
 					: decompressed}
 			</span>
-			<span>
-				<h3>Compression Ratio</h3>
-				{compressionRatio(input.length, decompressed.length * BYTE)}
-			</span>
+			<CompressionRatio
+				ratio={compressionRatio(input.length, decompressed.length * BYTE)}
+			/>
 		</>
 	)
 }

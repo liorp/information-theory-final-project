@@ -166,14 +166,20 @@ if (import.meta.vitest) {
 	const { it, expect, describe } = import.meta.vitest
 	describe('huffman', () => {
 		it('compresses and decompresses', () => {
-			expect(decompress(...compress('AABCBBABC'))).toEqual('AABCBBABC')
-			expect(decompress(...compress('Hello World'))).toEqual('Hello World')
-			expect(decompress(...compress('Hello Hello Hello'))).toEqual(
+			expect(decompress(compress('AABCBBABC').compressed)).toEqual('AABCBBABC')
+			expect(decompress(compress('Hello World').compressed)).toEqual(
+				'Hello World'
+			)
+			expect(decompress(compress('Hello Hello Hello').compressed)).toEqual(
 				'Hello Hello Hello'
 			)
-			expect(decompress(...compress('fffaa'))).toEqual('fffaa')
-			expect(decompress(...compress('hellofffasdf'))).toEqual('hellofffasdf')
-			expect(decompress(...compress('aaaaaaaaaaaaa'))).toEqual('aaaaaaaaaaaaa')
+			expect(decompress(compress('fffaa').compressed)).toEqual('fffaa')
+			expect(decompress(compress('hellofffasdf').compressed)).toEqual(
+				'hellofffasdf'
+			)
+			expect(decompress(compress('aaaaaaaaaaaaa').compressed)).toEqual(
+				'aaaaaaaaaaaaa'
+			)
 		})
 	})
 }

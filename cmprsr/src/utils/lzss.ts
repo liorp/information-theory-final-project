@@ -18,7 +18,7 @@ function getNumberBinaryForm(
 	return '0'.repeat(zerosNumber - binaryString.length) + binaryString
 }
 
-function getUncompressedString(
+function convertStringToUncompressedForm(
 	string_: string,
 	uncompressed_flag: string = UNCOMPRESSED_FLAG
 ): string {
@@ -45,20 +45,17 @@ function getMaximalMatchLengthAndOffset(
 
 	let windowToSearch = window
 	let tentativeMatchLength = minMatchLength
-	let currentLookAheadBufferSubString = lookAheadBuffer.slice(
-		0,
-		MIN_MATCH_LENGTH
-	)
+	let currentLookAheadBufferSubString = lookAheadBuffer.slice(0, minMatchLength)
 
-	// Search for maximal match from lookahead buffer in the window	
+	// Search for maximal match from lookahead buffer in the window
 	while (tentativeMatchLength <= maxMatchLength && !maximalMatchFound) {
 		// Get match's last index in the window
-		lastIndex = window.lastIndexOf(currentLookAheadBufferSubString)
+		lastIndex = windowToSearch.lastIndexOf(currentLookAheadBufferSubString)
 
 		// If a match doesn't exist, the maximal match was found in the previous iteration
 		if (lastIndex === -1) {
 			maximalMatchFound = true
-		// If a match exists, we need to keep searching for a longer one
+			// If a match exists, we need to keep searching for a longer one
 		} else {
 			tentativeMatchLength++
 		}
@@ -78,7 +75,7 @@ function getMaximalMatchLengthAndOffset(
 		)
 
 		// We only need to search the part of the window near the last index found
-		window = window.slice(0, lastIndex + tentativeMatchLength)
+		windowToSearch = windowToSearch.slice(0, lastIndex + tentativeMatchLength)
 	}
 
 	matchLength = tentativeMatchLength - 1
@@ -92,67 +89,79 @@ export function compress(
 	inputStream: string,
 	windowSize: number = DEFAULT_WINDOW_SIZE
 ): { compressed: string; stages: LZSSStage[] } {
-	let stages: LZSSStage[] = []
-	const initialWindowStart: number = Math.max(0, MIN_MATCH_LENGTH - windowSize)
+	const inputLength = inputStream.length
+	const stages: LZSSStage[] = []
+	let stagesToAppend: LZSSStage[] = []
 
-	// Set the coding position to the minimal length we allow for a match in the window
+	// Set the coding position, the window and the lookahead buffer according to the minimal length we allow for a match
 	let codingPosition: number = MIN_MATCH_LENGTH
-	let effectiveWindowSize: number = initialWindowStart
-	let window: string = inputStream.slice(effectiveWindowSize, codingPosition)
-	let lookAheadBuffer: string = inputStream.slice(codingPosition)
-	let currentCharacter = ''
+	let windowStart: number = Math.max(0, MIN_MATCH_LENGTH - windowSize)
+	let windowEnd: number = MIN_MATCH_LENGTH
+	let window: string = inputStream.slice(windowStart, windowEnd)
+	let lookAheadBuffer: string = inputStream.slice(MIN_MATCH_LENGTH)
 
+	let currentCharacter = ''
 	let lastIndex = 0
 	let matchLength = 0
 	let matchOffset = 0
 
 	// First MIN_MATCH_LENGTH cannot be compressed and put as is in compressed outcome (with the UNCOMPRESSED FLAG)
-	let compressed: string = getUncompressedString(
+	let compressed: string = convertStringToUncompressedForm(
 		inputStream.slice(0, MIN_MATCH_LENGTH)
 	)
-	let outputAddition = ''
+	let outputToAppend = ''
 
 	while (lookAheadBuffer.length >= MIN_MATCH_LENGTH) {
-		// If a match is found in the window, append to output:
-		// the COMPRESSED flag;
-		// the match's offset;
-		// and match's length relative to the end of the window
+		// Check if a match is found in the window
 		lastIndex = window.lastIndexOf(lookAheadBuffer.slice(0, MIN_MATCH_LENGTH))
-		if (lastIndex !== -1) {
-			// Find the longest match in the window for the lookahead buffer
-			;[matchLength, matchOffset, stages] = getMaximalMatchLengthAndOffset(
-				window,
-				lookAheadBuffer
-			)
 
-			outputAddition =
+		// If a match is found, Find the longest match in the window for the lookahead buffer
+		if (lastIndex !== -1) {
+			;[matchLength, matchOffset, stagesToAppend] =
+				getMaximalMatchLengthAndOffset(window, lookAheadBuffer)
+
+			/* If a match is found in the window, append to output:
+			 		the COMPRESSED flag;
+			 		the match's offset;
+			 		and match's length relative to the end of the window 
+			*/
+			outputToAppend =
 				COMPRESSED_FLAG +
 				getNumberBinaryForm(matchOffset) +
 				getNumberBinaryForm(matchLength)
 
-			// If no match is found in the window, append to output the UNCOMPRESSED flag and the character in current position
+			// If a match is not found, only the current character is considered
 		} else {
 			matchLength = 1
 			currentCharacter = lookAheadBuffer.charAt(0)
 
-			outputAddition =
-				UNCOMPRESSED_FLAG + getNumberBinaryForm(currentCharacter.charCodeAt(0))
+			stagesToAppend = [
+				[codingPosition, currentCharacter, currentCharacter, true]
+			]
 
-			stages.push([codingPosition, currentCharacter, currentCharacter, true])
+			/* If a match is not found in the window (or its size is insufficient), append to output:
+				the UNCOMPRESSED flag;
+				and the current character we process.
+			*/
+			outputToAppend =
+				UNCOMPRESSED_FLAG + getNumberBinaryForm(currentCharacter.charCodeAt(0))
 		}
 
 		// Increase the coding position (and the window) and decrease lookaheadbuffer according to the length of the match
 		codingPosition += matchLength
-		effectiveWindowSize = Math.max(0, codingPosition - windowSize)
-		window = inputStream.slice(effectiveWindowSize, codingPosition)
+		windowStart = Math.max(0, codingPosition - windowSize)
+		windowEnd = Math.min(codingPosition, inputLength)
+
+		window = inputStream.slice(windowStart, windowEnd)
 		lookAheadBuffer = inputStream.slice(codingPosition)
 
-		// Update compression output
-		compressed += outputAddition
+		// Update compression output and stages
+		compressed += outputToAppend
+		stages.push(...stagesToAppend)
 	}
 
-	// Add the final part of the input stream to the compressed stream, in case it is not compressed.
-	compressed += getUncompressedString(lookAheadBuffer)
+	// Add the input stream remainder to the compressed stream, as it is too short to be compressed surely cannot be compressed (since it's too short)
+	compressed += convertStringToUncompressedForm(lookAheadBuffer)
 
 	return { compressed, stages }
 }
@@ -236,4 +245,30 @@ export function decompress(compressed: string): string {
 	}
 
 	return decompressed
+}
+
+if (import.meta.vitest) {
+	const { it, expect, describe } = import.meta.vitest
+	describe('lzss', () => {
+		it('compresses and decompresses', () => {
+			expect(decompress(compress('a').compressed)).toEqual('a')
+			expect(decompress(compress('AABCBBABC').compressed)).toEqual('AABCBBABC')
+			expect(decompress(compress('Hello World').compressed)).toEqual(
+				'Hello World'
+			)
+			expect(decompress(compress('Hello Hello Hello').compressed)).toEqual(
+				'Hello Hello Hello'
+			)
+			expect(decompress(compress('fffaa').compressed)).toEqual('fffaa')
+			expect(decompress(compress('hellofffasdf').compressed)).toEqual(
+				'hellofffasdf'
+			)
+			expect(decompress(compress('Hello H').compressed)).toEqual('Hello H')
+			expect(decompress(compress('Hello He').compressed)).toEqual('Hello He')
+			expect(decompress(compress('Hello Hel').compressed)).toEqual('Hello Hel')
+			expect(decompress(compress('Hello Hell').compressed)).toEqual(
+				'Hello Hell'
+			)
+		})
+	})
 }
