@@ -1,6 +1,11 @@
+import StagePlayer from 'components/controls/StageController'
 import type { ReactElement, ReactNode } from 'react'
 import { useState } from 'react'
-import { CompressionOperation, CompressionType } from 'utils/consts'
+import {
+	CompressionOperation,
+	CompressionType,
+	MAX_TEXT_LENGTH_FOR_STAGES
+} from 'utils/consts'
 import { compress } from 'utils/lzss'
 import type { LZSSStage } from 'utils/types'
 import CompressionSummary from './visualizer/CompressionSummary'
@@ -17,18 +22,11 @@ function LZSSStagesVisualizer({
 
 	return (
 		<>
-			<div className='btn-group m-4 mx-auto'>
-				{[...Array.from({ length: stages.length }).keys()].map(index => (
-					<button
-						key={index}
-						type='button'
-						className={`btn ${index === selectedStage ? 'btn-active' : ''}`}
-						onClick={(): void => setSelectedStage(index)}
-					>
-						{index + 1}
-					</button>
-				))}
-			</div>
+			<StagePlayer
+				stageCount={stages.length}
+				selectedStage={selectedStage}
+				setSelectedStage={setSelectedStage}
+			/>
 			<div className='mx-auto flex flex-col'>
 				<span className='font-mono'>
 					{[...input].map((char, index) => (
@@ -50,7 +48,7 @@ function LZSSStagesVisualizer({
 }
 
 function Visualizer({ input }: { input: string }): ReactNode {
-	const { stages } = compress(input)
+	const { stages } = compress(input, input.length < MAX_TEXT_LENGTH_FOR_STAGES)
 
 	if (stages.length === 0) return undefined
 

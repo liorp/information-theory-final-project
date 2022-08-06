@@ -1,10 +1,9 @@
 import { transformArrayToObject } from 'utils/utils'
 import { BASE_DICTIONARY, KB } from './consts'
 import {
-	decodeNatrualNumberStream,
-	naturalNumberDecoding,
+	decodeNaturalNumberStream,
 	naturalNumberEncoding
-} from './naturlNumbersEncoding'
+} from './naturalNumbersEncoding'
 import { stringsToCheck } from './testUtils'
 import type { Dictionary, LZWStage } from './types'
 
@@ -60,7 +59,7 @@ export function decompress(
 	compressed: string,
 	showStages = false
 ): { decompressed: string; dictionary: Dictionary; stages: LZWStage[] } {
-	const numbers = decodeNatrualNumberStream(compressed)
+	const numbers = decodeNaturalNumberStream(compressed)
 	const stages: LZWStage[] = []
 	const dictionary = [...BASE_DICTIONARY]
 	let decompressed = dictionary[numbers[0]]
@@ -94,13 +93,6 @@ export function decompress(
 if (import.meta.vitest) {
 	const { it, expect, describe } = import.meta.vitest
 	describe('lzw', () => {
-		it('encodes and decodes natural number', () => {
-			expect(naturalNumberDecoding(naturalNumberEncoding(0))).toEqual(0)
-			expect(naturalNumberDecoding(naturalNumberEncoding(1))).toEqual(1)
-			expect(naturalNumberDecoding(naturalNumberEncoding(6))).toEqual(6)
-			expect(naturalNumberDecoding(naturalNumberEncoding(125))).toEqual(125)
-			expect(naturalNumberDecoding(naturalNumberEncoding(256))).toEqual(256)
-		})
 		it('compresses and decompresses', () => {
 			for (const string of stringsToCheck) {
 				const { compressed } = compress(string)

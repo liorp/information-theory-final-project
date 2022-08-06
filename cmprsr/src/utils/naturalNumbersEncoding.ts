@@ -24,7 +24,7 @@ export function naturalNumberEncoding(number_: number): string {
 		then the length of the binary form of the number;
 		and then the number itself.
 */
-export function decodeNatrualNumberStream(string_: string): number[] {
+export function decodeNaturalNumberStream(string_: string): number[] {
 	const naturalNumbers: number[] = []
 	let stringToDecode = string_
 	let firstZeroOffset = 0
@@ -64,5 +64,23 @@ export function decodeNatrualNumberStream(string_: string): number[] {
 		and then the number itself.
 */
 export function naturalNumberDecoding(string_: string): number {
-	return decodeNatrualNumberStream(string_)[0]
+	return decodeNaturalNumberStream(string_)[0]
+}
+
+if (import.meta.vitest) {
+	const { it, expect, describe } = import.meta.vitest
+	describe('natural numbers encoding', () => {
+		it('encodes and decodes natural number', () => {
+			// expect(naturalNumberDecoding(naturalNumberEncoding(0))).toEqual(0)
+			// expect(naturalNumberDecoding(naturalNumberEncoding(1))).toEqual(1)
+			// expect(naturalNumberDecoding(naturalNumberEncoding(6))).toEqual(6)
+			// expect(naturalNumberDecoding(naturalNumberEncoding(125))).toEqual(125)
+			// expect(naturalNumberDecoding(naturalNumberEncoding(256))).toEqual(256)
+			expect(
+				decodeNaturalNumberStream(
+					[1, 2, 3, 4, 5].map(v => naturalNumberEncoding(v)).join('')
+				)
+			).toEqual([1, 2, 3, 4, 5])
+		})
+	})
 }

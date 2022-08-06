@@ -87,28 +87,27 @@ export function createHuffmanTree(frequencies: Frequencies): HuffmanTreeNode {
 	return queue.dequeue()
 }
 
-// Create Huffman dictionary based on the Huffman tree
+/** Create Huffman dictionary based on the Huffman tree */
 export function createHuffmanDictionary(
 	tree?: HuffmanTreeNode,
 	prefix?: string
 ): Dictionary {
 	// If no tree is given, an empty dictionary is returned
-	// TODO: LAPIK Shouldn't we use tree === undefined?
-	if (!tree) return {}
+	if (tree === undefined) return {}
 
-	// TODO: LAPIK explain this line PLZ
+	// If the tree is a leaf, return the dictionary with the symbol and its prefix
 	if (tree.symbols) {
 		return { [tree.symbols]: prefix ?? '0' }
 	}
 
-	// TODO: LAPIK explain this line PLZ
+	// If the tree is not a leaf, recursively call the function on its left and right children
 	return {
 		...createHuffmanDictionary(tree.left, `${prefix ?? ''}0`),
 		...createHuffmanDictionary(tree.right, `${prefix ?? ''}1`)
 	}
 }
 
-// Get the string representing the Huffman tree
+/** Get the string representing the Huffman tree */
 export function getHuffmanTreeString(root?: HuffmanTreeNode): string {
 	// Leafs are represented as 0, other nodes are represented as 1
 	// If we try accessing a non-existing child, we return 0
@@ -127,7 +126,7 @@ export function getHuffmanTreeString(root?: HuffmanTreeNode): string {
 	)}`
 }
 
-// Get the binary string representing the Huffman tree
+/** Get the binary string representing the Huffman tree */
 export function getHuffmanTreeBinaryString(root?: HuffmanTreeNode): string {
 	// Leafs are represented as 0, other nodes are represented as 1
 	// If we try accessing a non-existing child, we return 0
@@ -147,7 +146,7 @@ export function getHuffmanTreeBinaryString(root?: HuffmanTreeNode): string {
 	)}`
 }
 
-// Get Huffman tree from the binary string representing it (undefined is returned in case of an error, i.e. malformed tre)
+/** Get Huffman tree from the binary string representing it (undefined is returned in case of an error, i.e. malformed tree) */
 export function getHuffmanTreeFromBinaryString(
 	binaryTreeString: string
 ): HuffmanTreeNode | undefined {
@@ -320,7 +319,7 @@ export function decompress(text: string, dictionary?: Dictionary): string {
 		dictionary ?? buildDictionaryFromInput(text)
 	)
 
-	// Get the offset into the binary text input where the actuall compressed data is stored
+	// Get the offset into the binary text input where the actual compressed data is stored
 	const treeLength = getTreeLengthFromInput(text)
 	const compressedDataOffset = INT_BITS_AMOUNT + treeLength
 
