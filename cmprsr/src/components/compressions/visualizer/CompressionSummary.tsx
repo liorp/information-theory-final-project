@@ -89,6 +89,7 @@ function Compressed({
 						href={`data:text/plain;charset=utf-8,${compressed}`}
 						download={`compressed_${type.toLowerCase()}`}
 						svg='https://www.svgrepo.com/show/39042/download.svg'
+						alt={`Download 'compressed_${type.toLowerCase()}'`}
 					/>
 				</h3>
 				{compressed.length > 20 ? `${compressed.slice(0, 20)}...` : compressed}
@@ -120,6 +121,7 @@ function Decompressed({
 						href={`data:text/plain;charset=utf-8,${decompressed}`}
 						download={`decompressed_${type.toLowerCase()}`}
 						svg='https://www.svgrepo.com/show/39042/download.svg'
+						alt={`Download 'decompressed_${type.toLowerCase()}'`}
 					/>
 				</h3>
 				{decompressed.length > 20
