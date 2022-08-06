@@ -83,12 +83,13 @@ function getMaximalMatchLengthAndOffset(
 
 	// If a match of length MIN_MATCH_LENGTH is not found, we early return null pointer
 	if (!windowToSearch.includes(currentLookAheadBufferSubString)) {
-		stages.push([
-			codingPosition,
-			currentCharacter,
-			currentLookAheadBufferSubString,
-			false
-		])
+		if (showStages)
+			stages.push([
+				codingPosition,
+				currentCharacter,
+				currentLookAheadBufferSubString,
+				false
+			])
 		return [0, 0, stages]
 	}
 
