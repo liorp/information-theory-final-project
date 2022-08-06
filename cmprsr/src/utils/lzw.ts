@@ -44,10 +44,8 @@ export function compress(
 	}
 
 	// Add the last string
-	if (updatedString) {
-		stringCode = dictionary.indexOf(currentString)
-		compressed += naturalNumberEncoding(stringCode)
-	}
+	stringCode = dictionary.indexOf(currentString)
+	compressed += naturalNumberEncoding(stringCode)
 
 	return { compressed, dictionary: transformArrayToObject(dictionary), stages }
 }
@@ -71,6 +69,8 @@ export function decompress(
 
 	for (const [index, code] of numbers.slice(1).entries()) {
 		pushedToDictionary = false
+		// If the next value is unknown, then it must be the value added to the dictionary in this iteration,
+		// And so its first character is the same as the first character of the current string
 		phrase = code in dictionary ? dictionary[code] : old + current
 		decompressed += phrase
 		;[current] = phrase

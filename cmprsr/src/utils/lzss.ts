@@ -81,10 +81,15 @@ function getMaximalMatchLengthAndOffset(
 	let tentativeMatchLength = minMatchLength
 	let currentLookAheadBufferSubString = lookAheadBuffer.slice(0, minMatchLength)
 
-	// If a match of length MIN_MATCH_LENGTH is not found, we early return [0, 0, []]
+	// If a match of length MIN_MATCH_LENGTH is not found, we early return null pointer
 	if (!windowToSearch.includes(currentLookAheadBufferSubString)) {
-		stages.push([codingPosition, currentCharacter, currentCharacter, true])
-		return [0, 0, []]
+		stages.push([
+			codingPosition,
+			currentCharacter,
+			currentLookAheadBufferSubString,
+			false
+		])
+		return [0, 0, stages]
 	}
 
 	// Search for maximal match from lookahead buffer in the window
@@ -107,7 +112,7 @@ function getMaximalMatchLengthAndOffset(
 				codingPosition,
 				currentCharacter,
 				currentLookAheadBufferSubString,
-				maximalMatchFound
+				maximalMatchFound || tentativeMatchLength - 1 === maxSearchLength
 			])
 
 		// Get current checked substring from lookahead buffer
@@ -150,37 +155,46 @@ function getCurrentCompressionOutput(
 export function compress(
 	inputStream: string,
 	showStages = false,
+	minMatchLength: number = MIN_MATCH_LENGTH,
+	maxMatchLength: number = MAX_MATCH_LENGTH,
 	windowSize: number = DEFAULT_WINDOW_SIZE
 ): { compressed: string; stages: LZSSStage[] } {
 	const inputLength = inputStream.length
-	const uncompressedStringBeginning = inputStream.slice(0, MIN_MATCH_LENGTH)
+	const uncompressedStringBeginning = inputStream.slice(0, minMatchLength)
 	const stages: LZSSStage[] = []
 	let stagesToAppend: LZSSStage[] = []
 
 	// Set the coding position, the window and the lookahead buffer according to the minimal length we allow for a match
-	let codingPosition: number = MIN_MATCH_LENGTH
-	let windowStart: number = Math.max(0, MIN_MATCH_LENGTH - windowSize)
-	let windowEnd: number = MIN_MATCH_LENGTH
+	let codingPosition: number = minMatchLength
+	let windowStart: number = Math.max(0, minMatchLength - windowSize)
+	let windowEnd: number = minMatchLength
 	let window: string = inputStream.slice(windowStart, windowEnd)
-	let lookAheadBuffer: string = inputStream.slice(MIN_MATCH_LENGTH)
+	let lookAheadBuffer: string = inputStream.slice(minMatchLength)
 
 	let matchLength = 0
 	let matchOffset = 0
 
-	// First MIN_MATCH_LENGTH cannot be compressed and thus put as is in compressed outcome (with the UNCOMPRESSED FLAG)
+	// First minMatchLength cannot be compressed and thus put as is in compressed outcome (with the UNCOMPRESSED FLAG)
 	let compressed: string = convertStringToUncompressedFormat(
 		uncompressedStringBeginning
 	)
 
 	// Push the initial stage
 	if (showStages)
-		stages.push([0, inputStream[0], uncompressedStringBeginning, true])
+		stages.push([0, inputStream[0], uncompressedStringBeginning, false])
 
 	// Iterate lookahead buffer until it gets too small
-	while (lookAheadBuffer.length >= MIN_MATCH_LENGTH) {
+	while (lookAheadBuffer.length >= minMatchLength) {
 		// Find the longest match in the window for the lookahead buffer
 		;[matchLength, matchOffset, stagesToAppend] =
-			getMaximalMatchLengthAndOffset(window, lookAheadBuffer, codingPosition)
+			getMaximalMatchLengthAndOffset(
+				window,
+				lookAheadBuffer,
+				codingPosition,
+				minMatchLength,
+				maxMatchLength,
+				showStages
+			)
 
 		// Append current compression output
 		compressed += getCurrentCompressionOutput(
@@ -211,12 +225,12 @@ export function compress(
 	compressed += convertStringToUncompressedFormat(lookAheadBuffer)
 
 	// Push the final stage
-	if (showStages)
+	if (showStages && lookAheadBuffer.length > 0)
 		stages.push([
 			codingPosition,
-			inputStream[0],
-			inputStream.slice(0, MIN_MATCH_LENGTH),
-			true
+			lookAheadBuffer[0],
+			lookAheadBuffer.slice(0, minMatchLength),
+			false
 		])
 
 	return { compressed, stages }

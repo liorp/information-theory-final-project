@@ -27,11 +27,12 @@ function LZSSStagesVisualizer({
 				selectedStage={selectedStage}
 				setSelectedStage={setSelectedStage}
 			/>
-			<div className='mx-auto flex flex-col'>
+			<div className='flex w-full flex-col items-center'>
 				<span className='font-mono'>
 					{[...input].map((char, index) => (
 						<span
-							key={char}
+							// eslint-disable-next-line react/no-array-index-key
+							key={index}
 							className={`before:invisible before:content-['.'] after:invisible after:content-['.'] ${
 								index === currentIndex ? 'bg-red-300 font-bold' : ''
 							}`}
@@ -50,7 +51,8 @@ function LZSSStagesVisualizer({
 function Visualizer({ input }: { input: string }): ReactNode {
 	const { stages } = compress(input, input.length < MAX_TEXT_LENGTH_FOR_STAGES)
 
-	if (stages.length === 0) return undefined
+	// eslint-disable-next-line unicorn/no-null
+	if (stages.length === 0) return null
 
 	return (
 		<>
