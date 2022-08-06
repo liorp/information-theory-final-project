@@ -24,7 +24,7 @@ export function compress(
 	let pushedToDictionary = false
 
 	for (const [index, character] of [...text].entries()) {
-		updatedString = (currentString + character).replace('\0', '')
+		updatedString = currentString + character
 		if (dictionary.includes(updatedString)) {
 			// If the updated string is in the dictionary, update the current string and continue
 			pushedToDictionary = false
