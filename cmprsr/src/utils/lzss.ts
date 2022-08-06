@@ -1,4 +1,5 @@
 /* eslint-disable unicorn/prefer-code-point */
+import { convertBinaryToNumber, convertNumberToBinary } from './binary'
 import {
 	COMPRESSED_FLAG,
 	COMPRESSED_INDEX_ADDITION,
@@ -12,20 +13,12 @@ import {
 import { stringsToCheck } from './testUtils'
 import type { LZSSStage } from './types'
 
-function getNumberBinaryForm(
-	number_: number,
-	zerosNumber: number = INT_BITS_AMOUNT
-): string {
-	const binaryString = number_.toString(2)
-	return '0'.repeat(zerosNumber - binaryString.length) + binaryString
-}
-
 function convertStringToUncompressedForm(
 	string_: string,
 	uncompressed_flag: string = UNCOMPRESSED_FLAG
 ): string {
 	return [...string_]
-		.map(char => uncompressed_flag + getNumberBinaryForm(char.charCodeAt(0)))
+		.map(char => uncompressed_flag + convertNumberToBinary(char.charCodeAt(0)))
 		.join('')
 }
 
@@ -144,8 +137,8 @@ export function compress(
 			*/
 			compressed +=
 				COMPRESSED_FLAG +
-				getNumberBinaryForm(matchOffset) +
-				getNumberBinaryForm(matchLength)
+				convertNumberToBinary(matchOffset) +
+				convertNumberToBinary(matchLength)
 		} else {
 			matchLength = 1
 			currentCharacter = lookAheadBuffer.charAt(0)
@@ -159,7 +152,8 @@ export function compress(
 				and the current character we process.
 			*/
 			compressed +=
-				UNCOMPRESSED_FLAG + getNumberBinaryForm(currentCharacter.charCodeAt(0))
+				UNCOMPRESSED_FLAG +
+				convertNumberToBinary(currentCharacter.charCodeAt(0))
 		}
 
 		// Increase the coding position (and the window) and decrease lookaheadbuffer according to the length of the match
@@ -220,15 +214,13 @@ export function decompress(compressed: string): string {
 			matchLengthEnd = matchLengthStart + INT_BITS_AMOUNT
 
 			// Extract match's offset
-			matchOffset = Number.parseInt(
-				compressed.slice(matchOffsetStart, matchOffsetEnd),
-				2
+			matchOffset = convertBinaryToNumber(
+				compressed.slice(matchOffsetStart, matchOffsetEnd)
 			)
 
 			// Extract match's length
-			matchLength = Number.parseInt(
-				compressed.slice(matchLengthStart, matchLengthEnd),
-				2
+			matchLength = convertBinaryToNumber(
+				compressed.slice(matchLengthStart, matchLengthEnd)
 			)
 
 			// Find appropriate match in previous bits
@@ -246,7 +238,7 @@ export function decompress(compressed: string): string {
 
 			// Extract character
 			charInBinary = compressed.slice(charStart, charEnd)
-			match = String.fromCharCode(Number.parseInt(charInBinary, 2))
+			match = String.fromCharCode(convertBinaryToNumber(charInBinary))
 
 			index += UNCOMPRESSED_INDEX_ADDITION
 		}
