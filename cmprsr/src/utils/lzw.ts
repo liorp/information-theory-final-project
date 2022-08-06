@@ -1,74 +1,16 @@
 import { transformArrayToObject } from 'utils/utils'
 import { BASE_DICTIONARY, KB } from './consts'
+import {
+	decodeNatrualNumberStream,
+	naturalNumberDecoding,
+	naturalNumberEncoding
+} from './naturlNumbersEncoding'
 import { stringsToCheck } from './testUtils'
 import type { Dictionary, LZWStage } from './types'
 
-function naturalNumberEncoding(number_: number): string {
-	// Representing a natural number with the encoding of natural numbers discussed in class:
-	// Prefix coding for the length of the binary form of the number, then the length of the binary form of the number, then the number itself
-	const numberBinRepr = number_.toString(2)
-	const numberBinReprLength = numberBinRepr.length
-	const binReprLengthBinRepr = numberBinReprLength.toString(2)
-	const binReprLengthBinReprLength = binReprLengthBinRepr.length
-
-	return (
-		`${'1'.repeat(binReprLengthBinReprLength)}` +
-		`0${binReprLengthBinRepr}${numberBinRepr}`
-	)
-}
-
-function naturalNumberDecoding(string_: string): number {
-	// Decoding a natural number from the encoding of natural numbers discussed in class:
-	// Prefix coding for the length of the binary form of the number, then the length of the binary form of the number, then the number itself
-	const firstZeroIndex = string_.indexOf('0')
-	const binReprLengthBinReprLength = firstZeroIndex
-	const binReprLengthBinRepr = Number.parseInt(
-		string_.slice(
-			firstZeroIndex + 1,
-			firstZeroIndex + 1 + binReprLengthBinReprLength
-		),
-		2
-	)
-	const binRepr = string_.slice(
-		firstZeroIndex + 1 + binReprLengthBinReprLength,
-		firstZeroIndex + 1 + binReprLengthBinReprLength + binReprLengthBinRepr
-	)
-	const number = Number.parseInt(binRepr, 2)
-
-	return number
-}
-
-function decodeNatrualNumberStream(string_: string): number[] {
-	// Decoding a stream of natural numbers from the encoding of natural numbers discussed in class:
-	// Prefix coding for the length of the binary form of the number, then the length of the binary form of the number, then the number itself
-	const naturalNumbers: number[] = []
-	let currentString = string_
-	while (currentString.length > 0) {
-		// Routinely decoding a natural number
-		const firstZeroIndex = currentString.indexOf('0')
-		const binReprLengthBinReprLength = firstZeroIndex
-		const binReprLengthBinRepr = Number.parseInt(
-			currentString.slice(
-				firstZeroIndex + 1,
-				firstZeroIndex + 1 + binReprLengthBinReprLength
-			),
-			2
-		)
-		const binRepr = currentString.slice(
-			firstZeroIndex + 1 + binReprLengthBinReprLength,
-			firstZeroIndex + 1 + binReprLengthBinReprLength + binReprLengthBinRepr
-		)
-		const number = Number.parseInt(binRepr, 2)
-		naturalNumbers.push(number)
-		currentString = currentString.slice(
-			firstZeroIndex + 1 + binReprLengthBinReprLength + binReprLengthBinRepr
-		)
-	}
-
-	return naturalNumbers
-}
-
 // TODO: Check stages
+// Compress a given inputStream into a binary form
+// TODO: LAPIK add more documentation on the algorithm's different phases
 export function compress(
 	text: string,
 	showStages = false
@@ -112,6 +54,8 @@ export function compress(
 }
 
 // TODO: Check stages
+// TODO: LAPIK add more documentation on the algorithm's different phases
+// Decompress a binary previously-compressed text into the original data
 export function decompress(
 	compressed: string,
 	showStages = false
@@ -130,7 +74,7 @@ export function decompress(
 		pushedToDictionary = false
 		phrase = code in dictionary ? dictionary[code] : old + current
 		decompressed += phrase
-		current = phrase.charAt(0)
+		;[current] = phrase
 		if (dictionary.length < 4 * KB) {
 			pushedToDictionary = true
 			dictionary.push(old + current)
