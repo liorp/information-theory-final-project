@@ -21,7 +21,7 @@ export interface HuffmanTreeNode {
 export type Frequencies = Map<string, number>
 export type HuffmanTreeStages = HuffmanTreeNode[][]
 
-// Get the frequency of each symbol in a given text
+/** Get the frequency of each symbol in a given text */
 export function getLetterFrequencies(text: string): Frequencies {
 	const frequencies = new Map<string, number>()
 
@@ -227,7 +227,7 @@ export function getHuffmanTreeFromBinaryString(
 	return root
 }
 
-// Returns Huffman tree size in bits
+/** Returns Huffman tree size in bits */
 export function getHuffmanTreeSize(root?: HuffmanTreeNode): number {
 	// Leafs are represented as 0, other nodes are represented as 1
 	// If we try accessing a non-existing child, we return 0
@@ -289,12 +289,12 @@ export function compress(text: string): {
 	}
 }
 
-// Get the length of the tree from the input's header
+/** Get the length of the tree from the input's header */
 function getTreeLengthFromInput(input: string): number {
 	return convertBinaryToNumber(input.slice(0, INT_BITS_AMOUNT))
 }
 
-// Build the Huffman dictionary based on the input
+/** Build the Huffman dictionary based on the input */
 export function buildDictionaryFromInput(input: string): Dictionary {
 	// Extract the binary representation of the Huffman tree from the binary input
 	const treeLength = getTreeLengthFromInput(input)
@@ -309,7 +309,7 @@ export function buildDictionaryFromInput(input: string): Dictionary {
 	)
 }
 
-// Decompress a binary previously-compressed text into the original data
+/** Decompress a binary previously-compressed text into the original data */
 export function decompress(text: string, dictionary?: Dictionary): string {
 	let temporaryCode = ''
 	let decompressed = ''

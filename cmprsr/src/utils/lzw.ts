@@ -7,9 +7,7 @@ import {
 import { stringsToCheck } from './testUtils'
 import type { Dictionary, LZWStage } from './types'
 
-// TODO: Check stages
-// Compress a given inputStream into a binary form
-// TODO: LAPIK add more documentation on the algorithm's different phases
+/** Compress a given inputStream into a binary form */
 export function compress(
 	text: string,
 	showStages = false
@@ -50,9 +48,7 @@ export function compress(
 	return { compressed, dictionary: transformArrayToObject(dictionary), stages }
 }
 
-// TODO: Check stages
-// TODO: LAPIK add more documentation on the algorithm's different phases
-// Decompress a binary previously-compressed text into the original data
+/** Decompress a binary previously-compressed text into the original data */
 export function decompress(
 	compressed: string,
 	showStages = false

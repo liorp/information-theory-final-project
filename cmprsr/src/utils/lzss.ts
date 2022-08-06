@@ -151,8 +151,7 @@ function getCurrentCompressionOutput(
 		: convertOffsetAndLengthToCompressedFormat(matchOffset, matchLength)
 }
 
-// TODO: Check stages
-// Compress a given inputStream into a binary form
+/** Compress a given inputStream into a binary form */
 export function compress(
 	inputStream: string,
 	showStages = false,
@@ -237,7 +236,7 @@ export function compress(
 	return { compressed, stages }
 }
 
-// Decompress a binary previously-compressed text into the original data
+/** Decompress a binary previously-compressed text into the original data */
 export function decompress(compressed: string): string {
 	let decompressed = ''
 	let compressionFlag = ''
