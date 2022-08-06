@@ -28,14 +28,17 @@ export function decodeNaturalNumberStream(string_: string): number[] {
 
 	while (currentString.length > 0) {
 		// Routinely decoding a natural number
-		const firstZeroOffset = string_.indexOf('0')
+		const firstZeroOffset = currentString.indexOf('0')
 		const binaryNumberOffset = 1 + 2 * firstZeroOffset
 		const binaryNumberLength = convertBinaryToNumber(
-			string_.slice(firstZeroOffset + 1, 2 * firstZeroOffset + 1)
+			currentString.slice(firstZeroOffset + 1, 2 * firstZeroOffset + 1)
 		)
 
 		number = convertBinaryToNumber(
-			string_.slice(binaryNumberOffset, binaryNumberOffset + binaryNumberLength)
+			currentString.slice(
+				binaryNumberOffset,
+				binaryNumberOffset + binaryNumberLength
+			)
 		)
 		naturalNumbers.push(number)
 		currentString = currentString.slice(binaryNumberOffset + binaryNumberLength)
@@ -57,16 +60,22 @@ if (import.meta.vitest) {
 	const { it, expect, describe } = import.meta.vitest
 	describe('natural numbers encoding', () => {
 		it('encodes and decodes natural number', () => {
-			// expect(naturalNumberDecoding(naturalNumberEncoding(0))).toEqual(0)
-			// expect(naturalNumberDecoding(naturalNumberEncoding(1))).toEqual(1)
-			// expect(naturalNumberDecoding(naturalNumberEncoding(6))).toEqual(6)
-			// expect(naturalNumberDecoding(naturalNumberEncoding(125))).toEqual(125)
-			// expect(naturalNumberDecoding(naturalNumberEncoding(256))).toEqual(256)
+			expect(naturalNumberDecoding(naturalNumberEncoding(0))).toEqual(0)
+			expect(naturalNumberDecoding(naturalNumberEncoding(1))).toEqual(1)
+			expect(naturalNumberDecoding(naturalNumberEncoding(2))).toEqual(2)
+			expect(naturalNumberDecoding(naturalNumberEncoding(6))).toEqual(6)
+			expect(naturalNumberDecoding(naturalNumberEncoding(125))).toEqual(125)
+			expect(naturalNumberDecoding(naturalNumberEncoding(256))).toEqual(256)
 			expect(
 				decodeNaturalNumberStream(
 					[1, 2, 3, 4, 5].map(v => naturalNumberEncoding(v)).join('')
 				)
 			).toEqual([1, 2, 3, 4, 5])
+			expect(
+				decodeNaturalNumberStream(
+					[256, 100, 2000].map(v => naturalNumberEncoding(v)).join('')
+				)
+			).toEqual([256, 100, 2000])
 		})
 	})
 }
