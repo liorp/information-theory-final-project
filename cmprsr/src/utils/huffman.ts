@@ -1,4 +1,10 @@
-import { convertBinaryToNumber, convertNumberToBinary } from './binary'
+/* eslint-disable unicorn/prefer-code-point */
+import {
+	convertBinaryToChar,
+	convertBinaryToNumber,
+	convertCharToBinary,
+	convertNumberToBinary
+} from './binary'
 import { BYTE, INT_BITS_AMOUNT } from './consts'
 import { PriorityQueue } from './priorityQueue'
 import { stringsToCheck } from './testUtils'
@@ -92,16 +98,36 @@ export function getHuffmanTreeString(root?: HuffmanTreeNode): string {
 	if (root.left === undefined && root.right === undefined) {
 		return `0${root.symbols ?? ''}`
 	}
-	
+
 	// Else, root is not a leaf, so it takes 1 bit to represent it
 	return `1${getHuffmanTreeString(root.left)}${getHuffmanTreeString(
 		root.right
 	)}`
 }
 
+export function getHuffmanTreeBinaryString(root?: HuffmanTreeNode): string {
+	// Leafs are represented as 0, other nodes are represented as 1
+	// If we try accessing a non-existing child, we return 0
+	if (root === undefined) {
+		return '0'
+	}
+
+	// If root is a leaf, it takes 1 (leaf bit) + BYTE bits to represent it
+	if (root.left === undefined && root.right === undefined) {
+		if (root.symbols === undefined) return ''
+		return `0${convertCharToBinary(root.symbols)}`
+	}
+
+	// Else, root is not a leaf, so it takes 1 bit to represent it
+	return `1${getHuffmanTreeBinaryString(root.left)}${getHuffmanTreeBinaryString(
+		root.right
+	)}`
+}
+
+// Get Huffman tree from the binary string representing it (undefined is returned in case of an error)
 export function getHuffmanTreeFromBinaryString(
 	binaryTreeString: string
-): HuffmanTreeNode {
+): HuffmanTreeNode | undefined {
 	let stringToSearch = binaryTreeString
 
 	// Initialize an empty stack
@@ -114,20 +140,18 @@ export function getHuffmanTreeFromBinaryString(
 	const root: HuffmanTreeNode = {
 		frequency: 0,
 		symbols: isLeaf
-			? convertBinaryToNumber(
-					stringToSearch.slice(1, 1 + INT_BITS_AMOUNT)
-			  ).toString()
+			? convertBinaryToChar(stringToSearch.slice(1, 1 + INT_BITS_AMOUNT))
 			: ''
 	}
 	let temporaryNode: HuffmanTreeNode
+	let topNode: HuffmanTreeNode | undefined
 
-	// Push root to stack if it's a leaf and update binary string
-	if (!isLeaf) {
-		stack.push(root)
-		stringToSearch = stringToSearch.slice(1)
-	} else {
-		stringToSearch = stringToSearch.slice(1 + INT_BITS_AMOUNT)
-	}
+	// If the root is a leaf, we have a one node tree
+	if (isLeaf) return root
+
+	// If the root is not a leaf, we push it to the stack and update binary string
+	stack.push(root)
+	stringToSearch = stringToSearch.slice(1)
 
 	// Iterate binary string
 	while (stringToSearch.length > 0) {
@@ -138,54 +162,42 @@ export function getHuffmanTreeFromBinaryString(
 		temporaryNode = {
 			frequency: 0,
 			symbols: isLeaf
-				? convertBinaryToNumber(
-						stringToSearch.slice(1, 1 + INT_BITS_AMOUNT)
-				  ).toString()
+				? convertBinaryToChar(stringToSearch.slice(1, 1 + INT_BITS_AMOUNT))
 				: ''
 		}
 
-		// Check if the top node in the stack has a left child
-		if (stack.at(-1).left === undefined) {
-			stack.at(-1).left = temporaryNode
+		// Obtain the top node from the stack
+		topNode = stack.at(-1)
 
-			// Push current node to stack if it's a leaf and update binary string
-			if (!isLeaf) {
-				stack.push(temporaryNode)
-				stringToSearch = stringToSearch.slice(1)
-			} else {
-				stringToSearch = stringToSearch.slice(1 + INT_BITS_AMOUNT)
-			}
+		if (topNode === undefined) return undefined
+
+		// If the top node in the stack has no left child, assign it to be the temporary node
+		if (topNode.left === undefined) {
+			topNode.left = temporaryNode
 		}
 
-		// Checking if the right position is NULL or not
-		else if (stack.at(-1).right === undefined) {
-			stack.at(-1).right = temporaryNode
-
-			// Push current node to stack if it's a leaf and update binary string
-			if (!isLeaf) {
-				stack.push(temporaryNode)
-				stringToSearch = stringToSearch.slice(1)
-			} else {
-				stringToSearch = stringToSearch.slice(1 + INT_BITS_AMOUNT)
-			}
+		// If the top node in the stack has a left child but has no right child, assign it to be the temporary node
+		else if (topNode.right === undefined) {
+			topNode.right = temporaryNode
 		}
 
-		// If left and right of top node is already filles
+		// If the top node has both left and right child, pop nodes from stack until a node with at least one child missing is found
 		else {
-			while (
-				stack.at(-1).left !== undefined &&
-				stack.at(-1).right !== undefined
-			)
+			while (topNode?.left !== undefined && topNode.right !== undefined) {
 				stack.pop()
-			stack.at(-1).right = temporaryNode
-
-			// Push current node to stack if it's a leaf and update binary string
-			if (!isLeaf) {
-				stack.push(temporaryNode)
-				stringToSearch = stringToSearch.slice(1)
-			} else {
-				stringToSearch = stringToSearch.slice(1 + INT_BITS_AMOUNT)
+				topNode = stack.at(-1)
 			}
+
+			if (topNode === undefined) return undefined
+			topNode.right = temporaryNode
+		}
+
+		// Push current node to stack if it's not a leaf and update binary string
+		if (!isLeaf) {
+			stack.push(temporaryNode)
+			stringToSearch = stringToSearch.slice(1)
+		} else {
+			stringToSearch = stringToSearch.slice(1 + INT_BITS_AMOUNT)
 		}
 	}
 
@@ -258,18 +270,16 @@ export function decompress(text: string, dictionary?: Dictionary): string {
 	)
 
 	const treeLength = getTreeLengthFromInput(text)
-	let startIndex = INT_BITS_AMOUNT + treeLength
-	let tempCode = ''
+	const startIndex = INT_BITS_AMOUNT + treeLength
+	let temporaryCode = ''
 	let decompressed = ''
-	
+
 	for (let index = startIndex; index < text.length; index++) {
 		for (let innerIndex = index; innerIndex < text.length + 1; innerIndex++) {
-			tempCode = text.slice(index, innerIndex)
-			if (tempCode in invertedDictionary) {
+			temporaryCode = text.slice(index, innerIndex)
+			if (temporaryCode in invertedDictionary) {
 				decompressed +=
-					invertedDictionary[
-						tempCode as keyof typeof invertedDictionary
-					]
+					invertedDictionary[temporaryCode as keyof typeof invertedDictionary]
 				index = innerIndex - 1
 				break
 			}
@@ -283,8 +293,8 @@ if (import.meta.vitest) {
 	describe('huffman', () => {
 		it('compresses and decompresses', () => {
 			for (const string of stringsToCheck) {
-				const { compressed, dictionary } = compress(string)
-				expect(decompress(compressed, dictionary)).toBe(string)
+				const { compressed } = compress(string)
+				expect(decompress(compressed)).toBe(string)
 			}
 		})
 	})

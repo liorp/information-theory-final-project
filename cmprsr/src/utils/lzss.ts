@@ -1,5 +1,9 @@
 /* eslint-disable unicorn/prefer-code-point */
-import { convertBinaryToNumber, convertNumberToBinary } from './binary'
+import {
+	convertBinaryToNumber,
+	convertCharToBinary,
+	convertNumberToBinary
+} from './binary'
 import {
 	COMPRESSED_FLAG,
 	COMPRESSED_INDEX_ADDITION,
@@ -18,7 +22,7 @@ function convertStringToUncompressedForm(
 	uncompressed_flag: string = UNCOMPRESSED_FLAG
 ): string {
 	return [...string_]
-		.map(char => uncompressed_flag + convertNumberToBinary(char.charCodeAt(0)))
+		.map(char => uncompressed_flag + convertCharToBinary(char))
 		.join('')
 }
 
@@ -151,9 +155,7 @@ export function compress(
 				the UNCOMPRESSED flag;
 				and the current character we process.
 			*/
-			compressed +=
-				UNCOMPRESSED_FLAG +
-				convertNumberToBinary(currentCharacter.charCodeAt(0))
+			compressed += UNCOMPRESSED_FLAG + convertCharToBinary(currentCharacter)
 		}
 
 		// Increase the coding position (and the window) and decrease lookaheadbuffer according to the length of the match
