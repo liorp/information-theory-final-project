@@ -74,9 +74,9 @@ export function decompress(
 			pushedToDictionary = true
 			dictionary.push(old + current)
 		}
-		old = phrase
 		if (showStages)
 			stages.push([index, phrase, old + current, pushedToDictionary])
+		old = phrase
 	}
 
 	return {
