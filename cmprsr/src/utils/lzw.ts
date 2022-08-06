@@ -94,19 +94,19 @@ export function decompress(
 if (import.meta.vitest) {
 	const { it, expect, describe } = import.meta.vitest
 	describe('lzw', () => {
-		it('compresses and decompresses', () => {
-			for (const string of stringsToCheck) {
-				const { compressed } = compress(string)
-				const { decompressed } = decompress(compressed)
-				expect(decompressed).toEqual(string)
-			}
-		})
 		it('encodes and decodes natural number', () => {
 			expect(naturalNumberDecoding(naturalNumberEncoding(0))).toEqual(0)
 			expect(naturalNumberDecoding(naturalNumberEncoding(1))).toEqual(1)
 			expect(naturalNumberDecoding(naturalNumberEncoding(6))).toEqual(6)
 			expect(naturalNumberDecoding(naturalNumberEncoding(125))).toEqual(125)
 			expect(naturalNumberDecoding(naturalNumberEncoding(256))).toEqual(256)
+		})
+		it('compresses and decompresses', () => {
+			for (const string of stringsToCheck) {
+				const { compressed } = compress(string)
+				const { decompressed } = decompress(compressed)
+				expect(decompressed).toEqual(string)
+			}
 		})
 	})
 }
