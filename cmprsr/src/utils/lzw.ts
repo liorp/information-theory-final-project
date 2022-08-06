@@ -23,7 +23,7 @@ export function compress(
 	let stringCode = 0
 	let pushedToDictionary = false
 
-	for (const [index, character] of [...`${text}\0`].entries()) {
+	for (const [index, character] of [...text].entries()) {
 		updatedString = (currentString + character).replace('\0', '')
 		if (dictionary.includes(updatedString)) {
 			// If the updated string is in the dictionary, update the current string and continue
@@ -39,12 +39,12 @@ export function compress(
 			}
 			currentString = character
 		}
-		if (character !== '\0' && showStages)
+		if (showStages)
 			stages.push([index, character, updatedString, pushedToDictionary])
 	}
 
 	// Add the last string
-	if (!pushedToDictionary) {
+	if (updatedString) {
 		stringCode = dictionary.indexOf(currentString)
 		compressed += naturalNumberEncoding(stringCode)
 	}

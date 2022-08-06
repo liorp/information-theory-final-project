@@ -1,4 +1,6 @@
 export const stringsToCheck = [
+	'he he',
+	'he he he he he',
 	'test',
 	'test2',
 	'test3',
