@@ -310,7 +310,15 @@ export function buildDictionaryFromInput(input: string): Dictionary {
 }
 
 /** Decompress a binary previously-compressed text into the original data */
-export function decompress(text: string, dictionary?: Dictionary): string {
+export function decompress(
+	text: string,
+	dictionary?: Dictionary
+): {
+	decompressed: string
+	dictionary: Dictionary
+	frequencies?: Frequencies
+	tree?: HuffmanTreeNode | undefined
+} {
 	let temporaryCode = ''
 	let decompressed = ''
 
@@ -335,7 +343,10 @@ export function decompress(text: string, dictionary?: Dictionary): string {
 			}
 		}
 	}
-	return decompressed
+	return {
+		decompressed,
+		dictionary: dictionary ?? buildDictionaryFromInput(text)
+	}
 }
 
 if (import.meta.vitest) {
@@ -344,7 +355,8 @@ if (import.meta.vitest) {
 		it('compresses and decompresses', () => {
 			for (const string of stringsToCheck) {
 				const { compressed } = compress(string)
-				expect(decompress(compressed)).toBe(string)
+				const { decompressed } = decompress(compressed)
+				expect(decompressed).toBe(string)
 			}
 		})
 	})

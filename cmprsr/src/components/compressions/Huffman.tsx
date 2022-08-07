@@ -11,6 +11,7 @@ import type { HuffmanTreeNode, HuffmanTreeStages } from 'utils/huffman'
 import {
 	compress,
 	createHuffmanTreeStages,
+	decompress,
 	getHuffmanTreeSize,
 	getHuffmanTreeString
 } from 'utils/huffman'
@@ -95,10 +96,19 @@ function HuffmanTreeStagesVisualizer({
 	)
 }
 
-function Visualizer({ input }: { input: string }): ReactElement {
-	const { dictionary, frequencies, tree } = compress(input)
-	const treeSize = getHuffmanTreeSize(tree)
-	const stages = createHuffmanTreeStages(frequencies)
+function Visualizer({
+	input,
+	operation
+}: {
+	input: string
+	operation: CompressionOperation
+}): ReactElement {
+	const { dictionary, frequencies, tree } =
+		operation === CompressionOperation.Compress
+			? compress(input)
+			: decompress(input)
+	const treeSize = tree && getHuffmanTreeSize(tree)
+	const stages = frequencies ? createHuffmanTreeStages(frequencies) : []
 
 	return (
 		<>
@@ -124,7 +134,14 @@ function Visualizer({ input }: { input: string }): ReactElement {
 				>
 					<h3>Tree</h3>
 					<div className='h-3/5'>
-						<HuffmanTreeVisualizer tree={tree} translate={{ x: 200, y: 10 }} />
+						{tree ? (
+							<HuffmanTreeVisualizer
+								tree={tree}
+								translate={{ x: 200, y: 10 }}
+							/>
+						) : (
+							<span>Visualization is not available for this string</span>
+						)}
 					</div>
 					<div className='divider' />
 					<div className='flex items-center gap-1'>
@@ -137,16 +154,24 @@ function Visualizer({ input }: { input: string }): ReactElement {
 							{InfoSVG}
 						</button>
 					</div>
-					<HuffmanTreeStagesVisualizer stages={stages} />
+					{stages.length > 0 ? (
+						<HuffmanTreeStagesVisualizer stages={stages} />
+					) : (
+						<span>Visualization is not available for this string</span>
+					)}
 					<div className='divider' />
 
 					<details>
 						<summary>Frequencies</summary>
-						<Dictionary
-							dictionary={Object.fromEntries(frequencies.entries())}
-							keyHeader='Symbol'
-							valueHeader='Frequency'
-						/>
+						{frequencies ? (
+							<Dictionary
+								dictionary={Object.fromEntries(frequencies.entries())}
+								keyHeader='Symbol'
+								valueHeader='Frequency'
+							/>
+						) : (
+							<span>Visualization is not available for this string</span>
+						)}
 					</details>
 					<details>
 						<summary>Dictionary ({treeSize} bytes)</summary>
@@ -170,9 +195,7 @@ export default function Huffman({ input }: { input: string }): ReactElement {
 					setOperation={setOperation}
 				/>
 			</div>
-			{operation === CompressionOperation.Compress && (
-				<Visualizer input={input} />
-			)}
+			<Visualizer input={input} operation={operation} />
 		</div>
 	)
 }
