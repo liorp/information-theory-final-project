@@ -1,5 +1,5 @@
 import StagePlayer from 'components/controls/StageController'
-import type { ReactElement, ReactNode } from 'react'
+import type { ReactElement } from 'react'
 import { useState } from 'react'
 import {
 	CompressionOperation,
@@ -48,11 +48,14 @@ function LZSSStagesVisualizer({
 	)
 }
 
-function Visualizer({ input }: { input: string }): ReactNode {
+function Visualizer({
+	input,
+	operation
+}: {
+	input: string
+	operation: CompressionOperation
+}): ReactElement {
 	const { stages } = compress(input, input.length < MAX_TEXT_LENGTH_FOR_STAGES)
-
-	// eslint-disable-next-line unicorn/no-null
-	if (stages.length === 0) return null
 
 	return (
 		<>
@@ -74,7 +77,11 @@ function Visualizer({ input }: { input: string }): ReactNode {
 					htmlFor=''
 				>
 					<h3>Stages</h3>
-					<LZSSStagesVisualizer stages={stages} input={input} />
+					{operation === CompressionOperation.Compress && stages.length > 0 ? (
+						<LZSSStagesVisualizer stages={stages} input={input} />
+					) : (
+						<span>Visualization not available for this string</span>
+					)}
 				</label>
 			</label>
 		</>
@@ -94,9 +101,7 @@ export default function LZSS({ input }: { input: string }): ReactElement {
 					setOperation={setOperation}
 				/>
 			</div>
-			{operation === CompressionOperation.Compress && (
-				<Visualizer input={input} />
-			)}
+			<Visualizer input={input} operation={operation} />
 		</div>
 	)
 }

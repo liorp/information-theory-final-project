@@ -92,7 +92,7 @@ function Visualizer({
 					{stages.length > 0 ? (
 						<LZWStagesVisualizer stages={stages} input={input} />
 					) : (
-						<span>Visualization not available</span>
+						<span>Visualization not available for this string</span>
 					)}
 				</label>
 			</label>

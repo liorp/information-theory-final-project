@@ -26,7 +26,7 @@ export enum InputMode {
 	File,
 	Text
 }
-export const MAX_TEXT_LENGTH_FOR_STAGES = 20
+export const MAX_TEXT_LENGTH_FOR_STAGES = 50
 
 export enum CompressionType {
 	LZSS = 'LZSS',
