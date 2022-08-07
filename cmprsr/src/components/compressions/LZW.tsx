@@ -7,6 +7,7 @@ import {
 	MAX_TEXT_LENGTH_FOR_STAGES
 } from 'utils/consts'
 import { compress, decompress } from 'utils/lzw'
+import { decodeNaturalNumberStream } from 'utils/naturalNumbersEncoding'
 import type { LZWStage } from 'utils/types'
 import CompressionSummary from './visualizer/CompressionSummary'
 import Dictionary from './visualizer/Dictionary'
@@ -16,7 +17,7 @@ function LZWStagesVisualizer({
 	input
 }: {
 	stages: LZWStage[]
-	input: string
+	input: number[] | string[]
 }): ReactElement {
 	const [selectedStage, setSelectedStage] = useState(0)
 	const [currentIndex, , updatedString, pushedToDictionary] =
@@ -31,7 +32,7 @@ function LZWStagesVisualizer({
 			/>
 			<div className='flex w-full flex-col items-center'>
 				<span className='font-mono'>
-					{[...input].map((char, index) => (
+					{input.map((char, index) => (
 						<span
 							// eslint-disable-next-line react/no-array-index-key
 							key={index}
@@ -65,6 +66,10 @@ function Visualizer({
 		operation === CompressionOperation.Compress
 			? compress(input, input.length < MAX_TEXT_LENGTH_FOR_STAGES)
 			: decompress(input, input.length < MAX_TEXT_LENGTH_FOR_STAGES)
+	const visualizedString =
+		operation === CompressionOperation.Compress
+			? [...input]
+			: decodeNaturalNumberStream(input)
 
 	return (
 		<>
@@ -90,7 +95,7 @@ function Visualizer({
 					<div className='divider' />
 					<h3>Stages</h3>
 					{stages.length > 0 ? (
-						<LZWStagesVisualizer stages={stages} input={input} />
+						<LZWStagesVisualizer stages={stages} input={visualizedString} />
 					) : (
 						<span>Visualization not available for this string</span>
 					)}
