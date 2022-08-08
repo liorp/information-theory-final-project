@@ -35,6 +35,36 @@
 			href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.3/gh-fork-ribbon.min.css"
 		/>
 
+		<link
+			rel="stylesheet"
+			type="text/css"
+			href="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.css"
+		/>
+		<script
+			src="https://cdn.jsdelivr.net/npm/cookieconsent@3/build/cookieconsent.min.js"
+			data-cfasync="false"
+		></script>
+
+		<script>
+			;(function loadGA() {
+				var ga = document.createElement('script')
+				ga.type = 'text/javascript'
+				ga.async = true
+				ga.src =
+					('https:' == document.location.protocol
+						? 'https://www'
+						: 'http://www') + '.googletagmanager.com/gtag/js?id=G-Y3GKPQWCZQ'
+				var s = document.getElementsByTagName('script')[0]
+				s.parentNode.insertBefore(ga, s)
+				window.dataLayer = window.dataLayer || []
+				function gtag() {
+					dataLayer.push(arguments)
+				}
+				gtag('js', new Date())
+
+				gtag('config', 'G-Y3GKPQWCZQ')
+			})()
+		</script>
 		<title>CMPRSR</title>
 	</head>
 	<body>
@@ -48,5 +78,6 @@
 		<noscript>You need to enable JavaScript to run this app.</noscript>
 		<div id="root"></div>
 		<script type="module" src="/src/main.tsx"></script>
+		<script type="module" src="/src/cookieconsent.js"></script>
 	</body>
 </html>
