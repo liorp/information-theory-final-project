@@ -51,9 +51,9 @@ export default function Home(): ReactElement {
 	}
 
 	return (
-		<div className='flex h-full flex-col items-center'>
+		<div className='flex h-full flex-col items-center overflow-y-auto'>
 			<form
-				className='prose mx-auto grid h-1/3 w-3/4 items-center gap-2 lg:prose-lg'
+				className='prose mx-auto grid w-3/4 items-center gap-2 lg:prose-lg'
 				onSubmit={onFormSubmit}
 			>
 				<a href='/' className='h-min w-1/4 min-w-[18em]'>
@@ -116,12 +116,12 @@ export default function Home(): ReactElement {
 					Go
 				</button>
 			</form>
-			<div className='carousel my-2 w-full grow p-4'>
+			<div className='carousel my-2 min-h-[50vh] w-full grow p-4'>
 				{!!input &&
 					Object.entries(compressionToComponent).map(([type, Component]) => (
 						<div
 							key={type}
-							className='carousel-item prose flex-[0_0_40%] p-4 prose-headings:m-0'
+							className='carousel-item prose flex-[0_0_70%] p-4 prose-headings:m-0 md:flex-[0_0_40%]'
 						>
 							<Component input={input} />
 						</div>

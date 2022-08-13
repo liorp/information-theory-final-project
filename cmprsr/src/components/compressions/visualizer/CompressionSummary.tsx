@@ -21,7 +21,8 @@ const useCompression = (
 		case CompressionType.Huffman:
 			return {
 				compress: (plainText: string) => compressHuffman(plainText).compressed,
-				decompress: decompressHuffman
+				decompress: (plainText: string) =>
+					decompressHuffman(plainText).decompressed
 			}
 		case CompressionType.LZW:
 			return {
